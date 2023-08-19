@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MeetingRoom.Models;
+using MeetingRoomWebApp.AutoGen;
 
 namespace MeetingRoom.Controllers;
 
@@ -15,7 +16,24 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        string? username = HttpContext.Session.GetString("Username");
+        string? email = HttpContext.Session.GetString("Email");
+        string? role = HttpContext.Session.GetString("Role");
+        var userId = HttpContext.Session.GetInt32("UserId");
+
+        using (var db = new MeetingRoomDbContext())
+        {
+            if (!string.IsNullOrEmpty(email))
+            {
+                return View();
+                // if (role.Equals("Admin"))
+                // {
+                //     return RedirectToAction("Admin", "Home");
+                // }
+                // return RedirectToAction("User", "Home");
+            }
+        }
+        return RedirectToAction("Index", "Login");
     }
 
     public IActionResult Privacy()
