@@ -32,7 +32,7 @@ namespace MeetingRoom.Controllers
 
                     if (user != null)
                     {
-                        HttpContext.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+                        // HttpContext.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
                         HttpContext.Session.SetString("Username", user.UserName);
                         HttpContext.Session.SetString("Email", user.Email);
                         HttpContext.Session.SetString("Role", user.Role);
