@@ -7,30 +7,34 @@ namespace MeetingRoom.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly MeetingRoomDbContext _db;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(MeetingRoomDbContext db)
     {
-        _logger = logger;
+        _db = db;
     }
 
-    public IActionResult Index(int uId)
+    public IActionResult Index(int? userId)
     {
-        string? username = HttpContext.Session.GetString("Username");
-        string? email = HttpContext.Session.GetString("Email");
-        string? role = HttpContext.Session.GetString("Role");
-        var userId = HttpContext.Session.GetInt32("UserId");
-
-        using (var db = new MeetingRoomDbContext())
+        userId = (int?)TempData["UserID"];
+        if (userId == null)
         {
-            if (!string.IsNullOrEmpty(email))
+            return RedirectToAction("Index", "Login");
+        }
+
+        using (_db)
+        {
+            var user = _db.Users?.Where(u => u.UserId == userId)
+                                .Select(u => new { u.UserName, u.Email, u.Role, u.UserId })
+                                .FirstOrDefault();
+
+            if (user != null)
             {
-                return View();
-                // if (role.Equals("Admin"))
-                // {
-                //     return RedirectToAction("Admin", "Home");
-                // }
-                // return RedirectToAction("User", "Home");
+                TempData["Username"] = user.UserName;
+                TempData["Email"] = user.Email;
+                TempData["Role"] = user.Role;
+                TempData["UserID"] = user.UserId;
+                return View("Home");
             }
         }
         return RedirectToAction("Index", "Login");

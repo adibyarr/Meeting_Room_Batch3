@@ -16,7 +16,7 @@ namespace MeetingRoom.Controllers
         // GET: Login
         public IActionResult Index()
         {
-            return View();
+            return View("Login");
         }
 
         // POST: Login
@@ -25,23 +25,20 @@ namespace MeetingRoom.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (var db = new MeetingRoomDbContext())
+                using (_db)
                 {
-                    var user = db.Users?.Where(u => u.Email.Equals(email) && u.Password.Equals(password))
-                                        .FirstOrDefault();
+                    var user = _db.Users?.Where(u => u.Email.Equals(email) && u.Password.Equals(password))
+                                         .FirstOrDefault();
 
                     if (user != null)
                     {
-                        // HttpContext.Response.Headers.Add("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
-                        HttpContext.Session.SetString("Username", user.UserName);
-                        HttpContext.Session.SetString("Email", user.Email);
-                        HttpContext.Session.SetString("Role", user.Role);
-                        HttpContext.Session.SetInt32("UserId", (int)user.UserId);
-                        return RedirectToAction("Index", "Home");
+                        TempData["UserID"] = Convert.ToInt32(user.UserId);
+                        return RedirectToAction("Index", "Home", user.UserId);
                     }
                 }
             }
-            return View();
+            TempData["ErrorMessage"] = "Login Attempt Failed!";
+            return View("Login");
         }
     }
 }
