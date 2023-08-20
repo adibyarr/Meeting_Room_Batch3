@@ -2,6 +2,7 @@ using MeetingRoomWebApp.AutoGen;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddDbContext<MeetingRoomDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("MeetingRoomDatabase") ?? throw new InvalidOperationException("Connection string 'MeetingRoomDbContext' not found.")));
 
@@ -10,12 +11,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDistributedMemoryCache();
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.IsEssential = true;
-    options.Cookie.HttpOnly = true;
-});
+builder.Services.AddSession();
 
 var app = builder.Build();
 

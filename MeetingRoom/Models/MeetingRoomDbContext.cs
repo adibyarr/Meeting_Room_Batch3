@@ -6,10 +6,6 @@ namespace MeetingRoomWebApp.AutoGen;
 
 public partial class MeetingRoomDbContext : DbContext
 {
-    public MeetingRoomDbContext()
-    {
-    }
-
     public MeetingRoomDbContext(DbContextOptions<MeetingRoomDbContext> options)
         : base(options)
     {
