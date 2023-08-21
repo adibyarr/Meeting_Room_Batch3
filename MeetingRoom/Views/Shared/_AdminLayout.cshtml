@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MeetingRoom.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="~/lib/fontawesome/dist/css/all.min.css" />
 
 </head>
 
@@ -46,7 +47,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/Admin/ListUser" title="Select Room">
+                    <a href="/Admin/Users" title="List Users">
                         <i class="fas fa-users"></i><span class="menu-text">List Users</span>
                     </a>
                 </li>
@@ -134,7 +135,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/fontawesome/dist/js/all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 
 </html>
