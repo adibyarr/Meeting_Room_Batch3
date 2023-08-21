@@ -33,12 +33,43 @@ namespace MeetingRoom.Controllers
                     if (user != null)
                     {
                         TempData["UserID"] = Convert.ToInt32(user.UserId);
-                        return RedirectToAction("Index", "Home", user.UserId);
+                        return RedirectToAction("SaveLoginData", user.UserId);
                     }
                 }
             }
-            TempData["ErrorMessage"] = "Login Attempt Failed!";
-            return View("Login");
+            TempData["ErrorMessage"] = "Wrong Email or Password";
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult SaveLoginData(int? userId)
+        {
+            userId = (int?)TempData["UserID"];
+            if (userId == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+
+            using (_db)
+            {
+                var user = _db.Users?.Where(u => u.UserId == userId)
+                                    .Select(u => new { u.UserName, u.Email, u.Role, u.UserId })
+                                    .FirstOrDefault();
+
+                if (user != null)
+                {
+                    TempData["Username"] = user.UserName;
+                    TempData["Email"] = user.Email;
+                    TempData["Role"] = user.Role;
+                    TempData["UserID"] = Convert.ToInt32(user.UserId);
+
+                    if (user.Role.Equals("Admin"))
+                    {
+                        return RedirectToAction("Index", "Admin", Convert.ToInt32(user.UserId));
+                    }
+                    return RedirectToAction("Index", "User", Convert.ToInt32(user.UserId));
+                }
+            }
+            return RedirectToAction("Index");
         }
     }
 }
