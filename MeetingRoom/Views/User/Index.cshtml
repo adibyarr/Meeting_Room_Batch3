@@ -5,6 +5,7 @@
 <div class="text-center">
     <h1 class="display-4">Meeting Room</h1>
     <p>Welcome @Context.Session.GetString("Username") to Meeting Room Reservation Website</p>
-    <p>Role: @TempData["Role"], Email: @TempData["Email"], User ID: @TempData["UserID"]</p>
+    <p>Role: @Context.Session.GetString("Role"), Email: @Context.Session.GetString("Email"), User ID:
+        @Context.Session.GetInt32("UserID")</p>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">Room Of Formulatrix Building</a>.</p>
 </div>

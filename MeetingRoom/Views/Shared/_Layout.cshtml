@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Meeting Room Reservation</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/fontawesome/dist/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MeetingRoom.styles.css" asp-append-version="true" />
 </head>
@@ -24,12 +25,12 @@
                 <p>Meeting Room Reservation</p>
                 <li>
                     <a href="/User/Index" title="Home">
-                        <i class="fas fa-home"></i><span class="menu-text">Home</span>
+                        <i class="fa-solid fa-house"></i><span class="menu-text">Home</span>
                     </a>
                 </li>
                 <li>
                     <a href="/User/Booking" title="Booking">
-                        <i class="fas fa-calendar"></i><span class="menu-text">Booking</span>
+                        <i class="fa-solid fa-calendar"></i><span class="menu-text">Booking</span>
                     </a>
                 </li>
                 <li>
@@ -111,6 +112,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/fontawesome/dist/js/all.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
