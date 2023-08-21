@@ -7,31 +7,39 @@ namespace MeetingRoom.Controllers;
 
 public class AdminController : Controller
 {
-    private readonly MeetingRoomDbContext _db;
+	private readonly MeetingRoomDbContext _db;
 
-    public AdminController(MeetingRoomDbContext db)
-    {
-        _db = db;
-    }
+	public AdminController(MeetingRoomDbContext db)
+	{
+		_db = db;
+	}
 
-    public IActionResult Index(int? userId)
-    {
-        userId = (int?)TempData.Peek("UserID");
-        if (userId != null)
-        {
-            return View();
-        }
-        return RedirectToAction("Index", "Login");
-    }
+	public IActionResult Index(int? userId)
+	{
+		userId = (int?)TempData.Peek("UserID");
+		if (userId != null)
+		{
+			return View();
+		}
+		return RedirectToAction("Index", "Login");
+	}
+	
+	public IActionResult Users()
+	{
+		List<User> users = _db.Users.ToList();
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+		return View(users);
+		
+	}
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+	public IActionResult Privacy()
+	{
+		return View();
+	}
+
+	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+	public IActionResult Error()
+	{
+		return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+	}
 }
