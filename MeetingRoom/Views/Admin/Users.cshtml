@@ -4,6 +4,41 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    /* Style for the popup container */
+    .popup-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Style for the popup content */
+    .popup-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    /* Style for the close button */
+    .closePopupButton {
+        position: absolute;
+        top: 0px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 24px;
+        font-weight: bold;
+        padding-bottom: 10px;
+    }
+</style>
+
 <div class="text-center">
     <h1 class="display-4">User List</h1>
 
@@ -23,28 +58,69 @@
                     <th scope="col">
                         Role
                     </th>
+                    <th scope="col">
+                        Action
+                    </th>
                 </tr>
             </thead>
-            
+
             @foreach (var user in Model)
             {
                 <tbody>
-                <tr>
-                    <td scope="col">
-                        @user.UserId
-                    </td>
-                    <td scope="col">
-                        @user.Email
-                    </td>
-                    <td scope="col">
-                        @user.Email
-                    </td>
-                    <td scope="col">
-                        @user.Role
-                    </td>
-                </tr>
+                    <tr>
+                        <td scope="col">
+                            @user.UserId
+                        </td>
+                        <td scope="col">
+                            @user.Username
+                        </td>
+                        <td scope="col">
+                            @user.Email
+                        </td>
+                        <td scope="col">
+                            @user.Role
+                        </td>
+                        <td scope="col">
+                            <button class="btn btn-warning updateUser">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="deleteUser btn btn-danger">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
+
+                // Pop Up Window
+                <div class="modal" id="popupModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Are you sure want to delete @user.Username?</h5>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This is the content of the popup.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
         </table>
     </div>
 </div>
+<script>
+    $(function () {
+        $(".deleteUser").click(function () {
+            var title = "Greetings";
+            var body = "Welcome to ASPSnippets.com";
+
+            $("#popupModal .modal-title").html(title);
+            $("#popupModal .modal-body").html(body);
+            $("#popupModal").modal("show");
+        });
+    });
+</script>
