@@ -37,6 +37,7 @@ public class UserController : Controller
 	
 	public IActionResult RoomList()
 	{
-		return View("RoomList");
+		List<Room> roomList = _db.Rooms.ToList();
+		return View("RoomList",roomList);
 	}
 }

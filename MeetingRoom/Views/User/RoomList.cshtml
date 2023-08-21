@@ -1,3 +1,5 @@
+@model IEnumerable<MeetingRoomWebApp.AutoGen.Room>
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -5,9 +7,12 @@
 <div class="text-center">
     <h1 class="display-4">Room List</h1>
     <div>
-        <table class="table table-striped">
+        <table class="table table-hover">
             <thead>
-                <tr>
+                <tr style="background-color: rgba(230, 230, 230, 0.659);">
+                    <th scope="col">
+                        Room ID
+                    </th>
                     <th scope="col">
                         Room Name
                     </th>
@@ -19,6 +24,26 @@
                     </th>
                 </tr>
             </thead>
+            
+            @foreach (var room in Model)
+            {
+                <tbody>
+                <tr>
+                    <td scope="col">
+                        @room.RoomId
+                    </td>
+                    <td scope="col">
+                        @room.RoomName
+                    </td>
+                    <td scope="col">
+                        @room.Capacity
+                    </td>
+                    <td scope="col">
+                        @room.Description
+                    </td>
+                </tr>
+                </tbody>
+            }
         </table>
     </div>
 </div>
