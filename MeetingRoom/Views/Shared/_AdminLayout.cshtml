@@ -36,19 +36,13 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/Admin/AddRoom" title="Add Room">
-                        <i class="fas fa-plus"></i><span class="menu-text">Add Room</span>
-                    </a>
-                </li>
-                <li>
-                <li>
-                    <a href="/Admin/SelectRoom" title="Select Room">
-                        <i class="fas fa-list"></i><span class="menu-text">Select Room</span>
+                    <a href="/Admin/RoomList" title="RoomList">
+                        <i class="fas fa-person-shelter"></i><span class="menu-text">Room List</span>
                     </a>
                 </li>
                 <li>
                     <a href="/Admin/Users" title="List Users">
-                        <i class="fas fa-users"></i><span class="menu-text">List Users</span>
+                        <i class="fas fa-users"></i><span class="menu-text">User List</span>
                     </a>
                 </li>
                 <li>
@@ -88,8 +82,8 @@
                                         style="width: 40px;" alt="Avatar" />
                                 </div>
                                 <div class="user-details">
-                                    <span class="username"> @TempData.Peek("Username")</span>
-                                    <span class="role">@TempData.Peek("Role")</span>
+                                    <span class="username">  @Context.Session.GetString("UserName")</span>
+                                    <span class="role">@Context.Session.GetString("Role")</span>
                                 </div>
 
                                 <script>

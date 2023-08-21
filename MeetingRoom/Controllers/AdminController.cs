@@ -27,9 +27,7 @@ public class AdminController : Controller
 	public IActionResult Users()
 	{
 		List<User> users = _db.Users.ToList();
-
 		return View(users);
-		
 	}
 
 	public IActionResult Privacy()
@@ -41,5 +39,11 @@ public class AdminController : Controller
 	public IActionResult Error()
 	{
 		return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+	}
+	
+	public IActionResult RoomList()
+	{
+		List<Room> roomList = _db.Rooms.ToList();
+		return View("RoomList",roomList);
 	}
 }
