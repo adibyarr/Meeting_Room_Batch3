@@ -31,6 +31,17 @@ public class AdminController : Controller
 		return View(users);
 		
 	}
+	public IActionResult Account(int? userId)
+	{
+		userId = (int?)TempData.Peek("UserID");
+		User user = _db.Users.Find((long)userId);
+		
+		if(user != null )
+		{
+			return View(user);
+		}
+		return RedirectToAction("Users");
+	}
 
 	public IActionResult Privacy()
 	{
