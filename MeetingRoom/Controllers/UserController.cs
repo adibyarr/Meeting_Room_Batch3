@@ -1,21 +1,27 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MeetingRoom.Models;
+using MeetingRoomWebApp.AutoGen;
 
 namespace MeetingRoom.Controllers;
 
-public class HomeController : Controller
+public class UserController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly MeetingRoomDbContext _db;
 
-    public HomeController(ILogger<HomeController> logger)
+    public UserController(MeetingRoomDbContext db)
     {
-        _logger = logger;
+        _db = db;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(int? userId)
     {
-        return View();
+        userId = (int?)TempData.Peek("UserID");
+        if (userId != null)
+        {
+            return View();
+        }
+        return RedirectToAction("Index", "Login");
     }
 
     public IActionResult Privacy()
