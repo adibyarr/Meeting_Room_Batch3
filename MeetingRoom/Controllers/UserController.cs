@@ -16,7 +16,7 @@ public class UserController : Controller
 
     public IActionResult Index(int? userId)
     {
-        userId = (int?)TempData.Peek("UserID");
+        userId = HttpContext.Session.GetInt32("UserID");
         if (userId != null)
         {
             return View();

@@ -57,10 +57,11 @@ namespace MeetingRoom.Controllers
 
                 if (user != null)
                 {
-                    TempData["Username"] = user.UserName;
-                    TempData["Email"] = user.Email;
-                    TempData["Role"] = user.Role;
-                    TempData["UserID"] = Convert.ToInt32(user.UserId);
+                    HttpContext.Session.SetString("Username", user.UserName);
+                    HttpContext.Session.SetString("Email", user.Email);
+                    HttpContext.Session.SetString("Role", user.Role);
+                    HttpContext.Session.SetString("Username", user.UserName);
+                    HttpContext.Session.SetInt32("UserID", Convert.ToInt32(user.UserId));
 
                     if (user.Role.Equals("Admin"))
                     {
