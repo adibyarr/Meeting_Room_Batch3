@@ -57,10 +57,9 @@ namespace MeetingRoom.Controllers
 
                 if (user != null)
                 {
-                    HttpContext.Session.SetString("Username", user.UserName);
+                    HttpContext.Session.SetString("UserName", user.UserName);
                     HttpContext.Session.SetString("Email", user.Email);
                     HttpContext.Session.SetString("Role", user.Role);
-                    HttpContext.Session.SetString("Username", user.UserName);
                     HttpContext.Session.SetInt32("UserID", Convert.ToInt32(user.UserId));
 
                     if (user.Role.Equals("Admin"))
