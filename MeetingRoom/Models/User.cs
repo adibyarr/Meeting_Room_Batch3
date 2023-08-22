@@ -26,6 +26,5 @@ public partial class User
     [DataType(DataType.Text)]
     public string? Role { get; set; }
 
-    [DataType(DataType.Custom)]
-    public bool IsActive { get; set; }
+    public short? IsActive { get; set; }
 }
