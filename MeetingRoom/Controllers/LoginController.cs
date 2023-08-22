@@ -27,7 +27,8 @@ namespace MeetingRoom.Controllers
             {
                 using (_db)
                 {
-                    var user = _db.Users?.Where(u => u.Email.Equals(email) && u.Password.Equals(password))
+                    var user = _db.Users?.Where(u => !string.IsNullOrEmpty(u.Email) && u.Email.Equals(email)
+                                                  && !string.IsNullOrEmpty(u.Password) && u.Password.Equals(password))
                                          .FirstOrDefault();
 
                     if (user != null)
@@ -52,17 +53,23 @@ namespace MeetingRoom.Controllers
             using (_db)
             {
                 var user = _db.Users?.Where(u => u.UserId == userId)
-                                    .Select(u => new { u.UserName, u.Email, u.Role, u.UserId })
+                                    .Select(u => new { u.Username, u.Email, u.Role, u.UserId })
                                     .FirstOrDefault();
 
                 if (user != null)
                 {
-                    HttpContext.Session.SetString("UserName", user.UserName);
-                    HttpContext.Session.SetString("Email", user.Email);
-                    HttpContext.Session.SetString("Role", user.Role);
+                    HttpContext.Session.SetString("UserName", user.Username);
+                    if (!string.IsNullOrEmpty(user.Email))
+                    {
+                        HttpContext.Session.SetString("Email", user.Email);
+                    }
+                    if (!string.IsNullOrEmpty(user.Role))
+                    {
+                        HttpContext.Session.SetString("Role", user.Role);
+                    }
                     HttpContext.Session.SetInt32("UserID", Convert.ToInt32(user.UserId));
 
-                    if (user.Role.Equals("Admin"))
+                    if (!string.IsNullOrEmpty(user.Role) && user.Role.Equals("Admin"))
                     {
                         return RedirectToAction("Index", "Admin", Convert.ToInt32(user.UserId));
                     }
