@@ -81,10 +81,10 @@
                             @user.Role
                         </td>
                         <td scope="col">
-                            <button class="btn btn-warning updateUser">
+                            <button class="updateUserBtn btn btn-warning">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <button class="deleteUser btn btn-danger">
+                            <button class="deleteUserBtn btn btn-danger">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -92,19 +92,21 @@
                 </tbody>
 
                 // Pop Up Window
-                <div class="modal" id="popupModal">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Are you sure want to delete @user.Username?</h5>
-                                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <p>This is the content of the popup.</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
+                <div class="popup-container" id="popupContainer">
+                    <div class="popup-content">
+                        <div class="close-button">
+                            <span id="closePopupButton">&times;</span>
+                        </div>
+                        <div class="popup-header">
+                            <h2>Are you sure want to delete user @user.Username?</h2>
+                        </div>
+                        <div class="popup-body">
+                            <button class="btn btn-danger" asp-controller="Admin" asp-action="DeleteUser">
+                                <span>Yes</span>
+                            </button>
+                            <button class="btn btn-primary">
+                                <span>No</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -113,14 +115,11 @@
     </div>
 </div>
 <script>
-    $(function () {
-        $(".deleteUser").click(function () {
-            var title = "Greetings";
-            var body = "Welcome to ASPSnippets.com";
+    /*  const deleteUserPopupButton = document.getElementsByClassName('deleteUserBtn'); */
+    const closePopupButton = document.getElementsByClassName('closePopupButton');
+    const popupContainer = document.getElementById('popupContainer');
 
-            $("#popupModal .modal-title").html(title);
-            $("#popupModal .modal-body").html(body);
-            $("#popupModal").modal("show");
-        });
+    $(".deleteUserBtn").on("click", function () {
+        popupContainer.style.display = 'flex';
     });
 </script>
