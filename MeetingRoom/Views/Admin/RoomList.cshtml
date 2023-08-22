@@ -7,6 +7,18 @@
 
 <style>
     /* Popup styles */
+    .popup-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+    }
+
     .popup {
         display: none;
         position: fixed;
@@ -24,7 +36,11 @@
         padding: 20px;
         border-radius: 5px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        max-width: 80%;
+        max-width: 80%;   
+    }
+    
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 7);
     }
 </style>
 
@@ -35,7 +51,7 @@
         <button class="btn btn-primary" id="createButton">Create</button>
     </div>
 
-    <div class="popup" id="popup">
+    <div class="popup" id="popupCreate">
         <div class="popup-content">
 
             <form id="createRoomForm" method="post">
@@ -55,7 +71,7 @@
                     style="margin-top: 10px; margin-bottom: 8px;">Create Room</button>
             </form>
 
-            <button class="btn btn-primary" id="closePopup">Close</button>
+            <button class="btn btn-primary" id="closePopupCreate">Close</button>
         </div>
     </div>
 
@@ -105,35 +121,157 @@
                             @room.Description
                         </td>
                         <td scope="col">
-                            <a class="btn btn-warning" asp-controller="Admin" asp-action="EditRoom"
-                                asp-route-roomId="@room.RoomId">
+                            @* <a class="btn btn-warning" asp-controller="Admin" asp-action="EditRoom"
+                        asp-route-roomId="@room.RoomId">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        </a> *@
+                            <button class="btn btn-warning" id="editRoomButton">
                                 <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteRoom"
-                                asp-route-roomId="@room.RoomId">
+                            </button>
+
+                            @* <a class="deleteRoomButton btn btn-danger" asp-controller="Admin" asp-action="DeleteRoom"
+                        asp-route-roomId="@room.RoomId">
+                        <i class="fa-solid fa-trash"></i>
+                        </a> *@
+                            <button class="btn btn-danger" id="deleteRoomButton"
+                                onclick="popupDeleteRoom('@room.RoomName', '@room.RoomId')">
                                 <i class="fa-solid fa-trash"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 </tbody>
+
+                // Pop Up Window
+                @* <div class="popup-container" id="popupContainer-@room.RoomId">
+            <div class="popup-content">
+            <div class="popup-header">
+            <h2>Are you sure want to delete Room @room.RoomName?</h2>
+            </div>
+            <div class="popup-body">
+            <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteRoom"
+            asp-route-roomId="@room.RoomId">
+            <span>Yes</span>
+            </a>
+            <button class="btn btn-primary" id="closePopupButton" data-room-id="@room.RoomId">
+            <span>No</span>
+            </button>
+            </div>
+            </div>
+            </div> *@
+
+                
             }
         </table>
     </div>
 </div>
 
+@* Pop Up Window *@
+<div class="modal" tabindex="-1" data-bs-backdrop='static' data-bs-keyboard=false>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <form>
+                    <button type="button" class="btn btn-danger"></button>
+                    <button type="button" class="btn btn-primary"></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    // CREATE ROOM POP-UP
     // Get references to the popup and button elements
-    const popup = document.getElementById("popup");
+    const popupCreate = document.getElementById("popupCreate");
     const createButton = document.getElementById("createButton");
-    const closePopup = document.getElementById("closePopup");
+    const closePopupCreate = document.getElementById("closePopupCreate");
 
     // Show the popup when the Create button is clicked
     createButton.addEventListener("click", () => {
-        popup.style.display = "flex";
+        popupCreate.style.display = "flex";
     });
 
     // Close the popup when the Close button is clicked
-    closePopup.addEventListener("click", () => {
-        popup.style.display = "none";
+    closePopupCreate.addEventListener("click", () => {
+        popupCreate.style.display = "none";
     });
+
+    // ------------------------------------------------------------------
+    @* // DELETE ROOM POP-UP
+        // Get references to the popup and button elements
+        const popupContainer = document.getElementById("popupContainer");
+        const deleteRoomButton = document.getElementById("deleteRoomButton");
+        const closePopupButton = document.getElementById("closePopupButton");
+
+        // Show the popup when the Create button is clicked
+        deleteRoomButton.addEventListener("click", () => {
+        popupContainer.style.display = "flex";
+        });
+
+        // Close the popup when the Close button is clicked
+        closePopupButton.addEventListener("click", () => {
+        popupContainer.style.display = "none";
+        }); *@
+
+        // ------------------------------------------------------------------
+
+    @* const deleteRoomButtons = document.querySelectorAll(".deleteRoomButton");
+        const closePopupButtons = document.querySelectorAll(".closePopupButton");
+
+        deleteRoomButtons.forEach(button => {
+        button.addEventListener("click", () => {
+        const roomId = this.getAttribute("data-room-id");
+        const popupContainer = document.getElementById(`popupContainer-${roomId}`);
+        popupContainer.style.display = "flex";
+        });
+        });
+
+        closePopupButtons.forEach(button => {
+        button.addEventListener("click", () => {
+        const roomId = this.getAttribute("data-room-id");
+        const popupContainer = document.getElementById(`popupContainer-${roomId}`);
+        popupContainer.style.display = "none";
+        });
+        }); *@
+
+        // ------------------------------------------------------------------
+
+        // Delete Confirmation Popup
+        function popupDeleteRoom(roomname, roomId) {
+            
+            $(".modal-title").html("Delete Room");
+
+            $(".modal-body").html(
+                `
+        <div class="row p-2">
+            <p>Are you sure you want to delete Room <strong>${roomname}</strong>?</p>
+        </div>
+        `
+            );
+
+            $(".modal-footer").html(
+                `
+            <form method="post" action="/Admin/DeleteRoom?roomId=${roomId}">
+                <input type="submit" class="btn btn-danger" value="Yes"/>
+                <button type="button" id="cancel-delete" class="btn btn-primary">No</button>
+            <form>
+        `
+            );
+
+            $("#cancel-delete").click(function () {
+                $(".modal").modal("hide");
+            });
+
+             
+            $(".modal").modal("show");
+            @* $('.modal').modal({backdrop: 'static', keyboard: false}, 'show'); *@
+            @* $('.modal').modal({backdrop: 'static', keyboard: false})   *@
+        }
 </script>

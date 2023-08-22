@@ -73,6 +73,7 @@ public class AdminController : Controller
 				// return RedirectToAction("RoomList");
 				_db.Rooms.Add(room);
 				_db.SaveChanges();
+				return RedirectToAction("RoomList");
 			}
 
 			// _db.Rooms.Add(room);
@@ -81,18 +82,21 @@ public class AdminController : Controller
 		return RedirectToAction("RoomList");
 	}
 	
-	[HttpGet]
+	[HttpPost]
 	public IActionResult DeleteRoom(long roomId)
 	{
 		if (ModelState.IsValid)
 		{
 			var room = _db.Rooms.Where(room => room.RoomId == roomId).ToList();
-
+			
+			Console.WriteLine($"DELETE 1. Room ID : {roomId}");	
 			if ((room is null) || (!room.Any()))
 			{
+				Console.WriteLine($"DELETE 2. Room ID : {roomId}");
 				return RedirectToAction("RoomList");
 			}
 
+			Console.WriteLine($"DELETE 3. Room ID : {roomId}");
 			_db.Rooms.RemoveRange(room);
 			_db.SaveChanges();
 		}
