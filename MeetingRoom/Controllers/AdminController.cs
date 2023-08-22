@@ -50,7 +50,7 @@ public class AdminController : Controller
 	/*
 	TODO:
 	- add warning feature if room name already exist
-	- add edit room detail feature
+	- add edit room detail feature	
 	 */
 	
 	[HttpPost]
