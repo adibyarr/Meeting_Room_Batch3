@@ -105,10 +105,14 @@
                             @room.Description
                         </td>
                         <td scope="col">
-                            <a class="btn btn-info" asp-controller="Admin" asp-action="EditRoom"
-                                asp-route-id="@room.RoomId">Edit</a>
+                            <a class="btn btn-warning" asp-controller="Admin" asp-action="EditRoom"
+                                asp-route-roomId="@room.RoomId">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
                             <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteRoom"
-                                asp-route-roomId="@room.RoomId">Delete</a>
+                                asp-route-roomId="@room.RoomId">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                 </tbody>
