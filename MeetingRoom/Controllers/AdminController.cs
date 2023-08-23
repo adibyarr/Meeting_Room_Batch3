@@ -44,6 +44,7 @@ public class AdminController : Controller
 		}
 		return RedirectToAction("Users");
 	}
+	
 	[HttpGet]
 	[Route("Admin/SaveProfile")]
 	public IActionResult SaveProfile(long? userId)
@@ -60,34 +61,49 @@ public class AdminController : Controller
 				Email = user.Email
 			};
 		
-		
 			return View(model);
-		
 	}
+	
 	[HttpPost]
-	[Route("Admin/Profile")]
-	[ValidateAntiForgeryToken]
+	[Route("Admin/EditProfile")]
+	// [ValidateAntiForgeryToken]
 	public IActionResult EditProfile(long? userId, User user)
 	{
+		Console.WriteLine("CHECK 1");
 		if(!ModelState.IsValid)
 		{
-			return View("SaveProfile", User);
+			Console.WriteLine("CHECK 2");
+			return View("SaveProfile", user);
 		}
 		
 		var userProfile =  _db.Users.Find(userId);
+		Console.WriteLine("CHECK 3");
+		
 		if(userProfile == null )
 		{
+			Console.WriteLine("CHECK 4");
 			return View("NotFound");
 		}
+		
 		userProfile.UserName = user.UserName;
 		userProfile.Email = user.Email;
-		return RedirectToAction("ProfileSaved", User);
+		
+		Console.WriteLine($"found username : {userProfile.UserName}");
+		Console.WriteLine($"found email : {userProfile.Email}");
+		Console.WriteLine($"passed username : {user.UserName}");
+		Console.WriteLine($"passed email : {user.Email}");
+		Console.WriteLine("CHECK 5");
+		
+		return RedirectToAction("Account");
 	}
+	
 	[HttpGet]
+	[Route("Admin/ProfileSaved")]
 	public IActionResult ProfileSaved()
 	{
 		return View();
 	}
+	
 	private bool UserExist(long? userId)
 	{
 		return _db.Users.Any(e => e.UserId == userId);
