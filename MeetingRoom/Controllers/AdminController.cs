@@ -54,7 +54,8 @@ public class AdminController : Controller
 	 */
 	
 	[HttpPost]
-	public IActionResult RoomList(string roomName, int capacity, string description)
+	[Route("Admin/CreateRoom")]
+	public IActionResult CreateRoom(string roomName, int capacity, string description)
 	{
 		if (ModelState.IsValid)
 		{
@@ -65,7 +66,6 @@ public class AdminController : Controller
 				Description = description
 			};
 			
-			// Room? roomExisted = _db.Rooms.FirstOrDefault(r => r.RoomName == roomName);
 			var roomExisted = _db.Rooms.Where(room => room.RoomName == roomName).ToList();
 			
 			if ((roomExisted is null) || !roomExisted.Any())
@@ -75,9 +75,6 @@ public class AdminController : Controller
 				_db.SaveChanges();
 				return RedirectToAction("RoomList");
 			}
-
-			// _db.Rooms.Add(room);
-			// _db.SaveChanges();
 		}
 		return RedirectToAction("RoomList");
 	}
@@ -112,15 +109,6 @@ public class AdminController : Controller
 		if (ModelState.IsValid)
 		{
 			Room? room = _db.Rooms?.Find(roomId);
-			
-			Console.WriteLine(roomId);
-			Console.WriteLine(roomName);
-			Console.WriteLine(capacity);
-			Console.WriteLine(description);
-			
-			Console.WriteLine(room.RoomName);
-			Console.WriteLine(room.Capacity);
-			Console.WriteLine(room.Description);
 			
 			room.RoomName = roomName;
 			room.Capacity = capacity;
