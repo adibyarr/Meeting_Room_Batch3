@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MeetingRoom.Models;
 using MeetingRoomWebApp.AutoGen;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace MeetingRoom.Controllers;
 
@@ -41,6 +43,54 @@ public class AdminController : Controller
 			return View(user);
 		}
 		return RedirectToAction("Users");
+	}
+	[HttpGet]
+	[Route("Admin/SaveProfile")]
+	public IActionResult SaveProfile(long? userId)
+	
+	{
+			var user = _db.Users.Find(userId);
+			if(user != null)
+			{
+				return View("NotFound");
+			}
+			var model = new User
+			{
+				UserName = user.UserName,
+				Email = user.Email
+			};
+		
+		
+			return View(model);
+		
+	}
+	[HttpPost]
+	[Route("Admin/Profile")]
+	[ValidateAntiForgeryToken]
+	public IActionResult EditProfile(long? userId, User user)
+	{
+		if(!ModelState.IsValid)
+		{
+			return View("SaveProfile", User);
+		}
+		
+		var userProfile =  _db.Users.Find(userId);
+		if(userProfile == null )
+		{
+			return View("NotFound");
+		}
+		userProfile.UserName = user.UserName;
+		userProfile.Email = user.Email;
+		return RedirectToAction("ProfileSaved", User);
+	}
+	[HttpGet]
+	public IActionResult ProfileSaved()
+	{
+		return View();
+	}
+	private bool UserExist(long? userId)
+	{
+		return _db.Users.Any(e => e.UserId == userId);
 	}
 
 	public IActionResult Privacy()

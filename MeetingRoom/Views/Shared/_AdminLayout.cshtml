@@ -91,6 +91,11 @@
                                     <span class="username"> @TempData.Peek("Username")</span>
                                     <span class="role">@TempData.Peek("Role")</span>
                                 </div>
+                                <div class="container">
+                                    <main role="main" class="pb-3">
+                                        @RenderSection("SaveProfileSection", required:false)
+                                    </main>
+                                </div>
 
                                 <script>
                                     var user = @ViewData["Username"];
