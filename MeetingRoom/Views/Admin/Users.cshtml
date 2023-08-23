@@ -46,10 +46,11 @@
                             @user.Role
                         </td>
                         <td scope="col">
-                            <button class="updateUserBtn btn btn-warning">
+                            <button class="btn btn-warning"
+                                onclick="popupUpdateUser('@user.Username', '@user.Email', '@user.Role', '@user.UserId')">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            @if (@user.Role.Equals("Admin"))
+                            @if (@user.Role != null && @user.Role.Equals("Admin"))
                             {
                                 <button class="btn btn-danger" disabled>
                                     <i class="fa-solid fa-trash"></i>
@@ -74,22 +75,63 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Ini Title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure want to delete user?</p>
-                </div>
-                <div class="modal-footer">
-                    <form>
-                        <button type="button" class="btn btn-danger">Yes</button>
-                        <button type="button" class="btn btn-primary">No</button>
-                    </form>
+                    <p>Ini body</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <script>
+    // Update User Popup
+    function popupUpdateUser(username, email, role, userId) {
+
+        $(".modal-title").html("Edit User");
+
+        $(".modal-body").html(
+            `
+            <form method="post" action="/Admin/UpdateUser?userId=${userId}">
+    @Html.AntiForgeryToken()
+                <table class="table table-borderless">
+                <tr>
+                    <td>Username: </td>
+                    <td>
+                        <input type="text" name="Username" class="form-control" value="${username}" disabled/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Email: </td>
+                    <td>
+                        <input type="text" name="Email" class="form-control" value="${email}" disabled/>
+                    </td>
+                </tr>            
+                <tr>
+                    <td>Role: </td>
+                    <td>
+                        <select name="Role" id="role" class="form-control" style="text-align: center">
+                            <div>
+                                <option value="Manager">Manager</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Engineer">Engineer</option>
+                            </div>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+            </table>
+            <div style="text-align: right">
+                <input type="submit" class="btn btn-warning" value="Update"/>
+                <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
+            </div>
+        <form>
+        `
+        );
+
+        $(".modal").modal("show");
+    }
+
     // Delete Confirmation Popup
     function popupDeleteUser(username, userId) {
 
@@ -97,24 +139,18 @@
 
         $(".modal-body").html(
             `
-        <div class="row p-2">
-            <p>Are you sure you want to delete user <strong>${username}</strong>?</p>
-        </div>
+            <div class="row p-2">
+                <p>Are you sure you want to delete user <strong>${username}</strong>?</p>
+            </div>
+            <div style="text-align: right">
+                <form method="delete" action="/Admin/DeleteUser/${userId}">
+    @Html.AntiForgeryToken()
+                    <input type="submit" class="btn btn-danger" value="Delete"/>
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
+                <form>
+            </div>
         `
         );
-
-        $(".modal-footer").html(
-            `
-            <form method="post" action="/Admin/DeleteUser/${userId}">
-                <input type="submit" class="btn btn-danger" value="Yes"/>
-                <button type="button" id="cancel-delete" class="btn btn-primary">No</button>
-            <form>
-        `
-        );
-
-        $("#cancel-delete").click(function () {
-            $(".modal").modal("hide");
-        });
 
         $(".modal").modal("show");
     }

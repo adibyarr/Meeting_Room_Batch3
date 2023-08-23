@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MeetingRoom.Models;
 using MeetingRoomWebApp.AutoGen;
+using System.Data.Common;
 
 namespace MeetingRoom.Controllers;
 
@@ -31,6 +32,28 @@ public class AdminController : Controller
 	}
 
 	[HttpPost]
+	[ValidateAntiForgeryToken]
+	[Route("Admin/UpdateUser/{userId:long}")]
+	public IActionResult UpdateUser(long? userId, User model)
+	{
+		using (_db)
+		{
+			var user = _db.Users?.Find(userId);
+
+			if (user != null && user.Role != null)
+			{
+				if (!user.Role.Equals("Admin"))
+				{
+					user.Role = model.Role;
+					_db.SaveChanges();
+				}
+			}
+		}
+		return RedirectToAction("Users");
+	}
+
+	[HttpDelete]
+	[ValidateAntiForgeryToken]
 	[Route("Admin/DeleteUser/{userId:long}")]
 	public IActionResult DeleteUser(long? userId)
 	{
@@ -38,11 +61,13 @@ public class AdminController : Controller
 		{
 			var user = _db.Users?.Find(userId);
 
-			if (user != null && !user.Role.Equals("Admin"))
+			if (user != null && user.Role != null)
 			{
-				user.IsActive = 0;
-
-				_db.SaveChanges();
+				if (!user.Role.Equals("Admin"))
+				{
+					_db.Users?.Remove(user);
+					_db.SaveChanges();
+				}
 			}
 		}
 		return RedirectToAction("Users");
