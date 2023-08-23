@@ -9,6 +9,7 @@ namespace MeetingRoomWebApp.AutoGen;
 public partial class Room
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long RoomId { get; set; }
 
     public string RoomName { get; set; } = null!;
@@ -16,4 +17,6 @@ public partial class Room
     public long? Capacity { get; set; }
 
     public string? Description { get; set; }
+    
+    public virtual ICollection<BookedRoom> BookedRooms { get; set;} = new List<BookedRoom>();
 }

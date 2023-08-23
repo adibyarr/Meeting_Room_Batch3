@@ -43,14 +43,14 @@
                             @user.Email
                         </td>
                         <td scope="col">
-                            @user.Role
+                            @user.Roles?.RoleName
                         </td>
                         <td scope="col">
                             <button class="btn btn-warning"
-                                onclick="popupUpdateUser('@user.Username', '@user.Email', '@user.Role', '@user.UserId')">
+                                onclick="popupUpdateUser('@user.Username', '@user.Email', '@user.Roles?.RoleName', '@user.UserId')">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            @if (@user.Role != null && @user.Role.Equals("Admin"))
+                            @if (@user.Roles?.RoleName != null && @user.Roles.RoleName.Equals("Admin"))
                             {
                                 <button class="btn btn-danger" disabled>
                                     <i class="fa-solid fa-trash"></i>
@@ -92,8 +92,8 @@
 
         $(".modal-body").html(
             `
-            <form method="post" action="/Admin/UpdateUser?userId=${userId}">
-    @Html.AntiForgeryToken()
+            <form method="post" action="/Admin/UpdateUser/${userId}">
+            @Html.AntiForgeryToken()
                 <table class="table table-borderless">
                 <tr>
                     <td>Username: </td>
@@ -112,9 +112,9 @@
                     <td>
                         <select name="Role" id="role" class="form-control" style="text-align: center">
                             <div>
-                                <option value="Manager">Manager</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Engineer">Engineer</option>
+                                <option value="2">Manager</option>
+                                <option value="1">Admin</option>
+                                <option value="3">Engineer</option>
                             </div>
                         </select>
                     </td>
@@ -143,8 +143,8 @@
                 <p>Are you sure you want to delete user <strong>${username}</strong>?</p>
             </div>
             <div style="text-align: right">
-                <form method="delete" action="/Admin/DeleteUser/${userId}">
-    @Html.AntiForgeryToken()
+                <form method="post" action="/Admin/DeleteUser/${userId}">
+                @Html.AntiForgeryToken()
                     <input type="submit" class="btn btn-danger" value="Delete"/>
                     <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
                 <form>

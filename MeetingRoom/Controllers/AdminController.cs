@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MeetingRoom.Models;
 using MeetingRoomWebApp.AutoGen;
 using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeetingRoom.Controllers;
 
@@ -27,7 +28,7 @@ public class AdminController : Controller
 
 	public IActionResult Users()
 	{
-		List<User> users = _db.Users.Where(u => u.IsActive == 1).ToList();
+		List<User> users = _db.Users.Include(u => u.Roles).ToList();
 		return View(users);
 	}
 
@@ -38,13 +39,13 @@ public class AdminController : Controller
 	{
 		using (_db)
 		{
-			var user = _db.Users?.Find(userId);
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
 
-			if (user != null && user.Role != null)
+			if (user != null && user.Roles?.RoleName != null)
 			{
-				if (!user.Role.Equals("Admin"))
+				if (!user.Roles.RoleName.Equals("Admin"))
 				{
-					user.Role = model.Role;
+					user.RoleId = model.RoleId;
 					_db.SaveChanges();
 				}
 			}
@@ -52,18 +53,18 @@ public class AdminController : Controller
 		return RedirectToAction("Users");
 	}
 
-	[HttpDelete]
+	[HttpPost]
 	[ValidateAntiForgeryToken]
 	[Route("Admin/DeleteUser/{userId:long}")]
 	public IActionResult DeleteUser(long? userId)
 	{
 		using (_db)
 		{
-			var user = _db.Users?.Find(userId);
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
 
-			if (user != null && user.Role != null)
+			if (user != null && user.Roles?.RoleName != null)
 			{
-				if (!user.Role.Equals("Admin"))
+				if (!user.Roles.RoleName.Equals("Admin"))
 				{
 					_db.Users?.Remove(user);
 					_db.SaveChanges();
@@ -71,17 +72,6 @@ public class AdminController : Controller
 			}
 		}
 		return RedirectToAction("Users");
-	}
-
-	public IActionResult Privacy()
-	{
-		return View();
-	}
-
-	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-	public IActionResult Error()
-	{
-		return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 	}
 
 	public IActionResult RoomList()
