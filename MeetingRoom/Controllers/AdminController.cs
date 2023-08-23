@@ -49,8 +49,8 @@ public class AdminController : Controller
 	
 	/*
 	TODO:
-	- add warning feature if room name already exist
-	- add edit room detail feature	
+	[ ] add warning feature if room name already exist
+	[x] add edit room detail feature	
 	 */
 	
 	[HttpPost]
@@ -83,6 +83,7 @@ public class AdminController : Controller
 	}
 	
 	[HttpPost]
+	[Route("Admin/DeleteRoom")]
 	public IActionResult DeleteRoom(long roomId)
 	{
 		if (ModelState.IsValid)
@@ -98,6 +99,33 @@ public class AdminController : Controller
 
 			Console.WriteLine($"DELETE 3. Room ID : {roomId}");
 			_db.Rooms.RemoveRange(room);
+			_db.SaveChanges();
+		}
+	
+		return RedirectToAction("RoomList");
+	}
+	
+	[HttpPost]
+	[Route("Admin/EditRoom")]
+	public IActionResult EditRoom(long roomId, string roomName, long capacity, string description)
+	{
+		if (ModelState.IsValid)
+		{
+			Room? room = _db.Rooms?.Find(roomId);
+			
+			Console.WriteLine(roomId);
+			Console.WriteLine(roomName);
+			Console.WriteLine(capacity);
+			Console.WriteLine(description);
+			
+			Console.WriteLine(room.RoomName);
+			Console.WriteLine(room.Capacity);
+			Console.WriteLine(room.Description);
+			
+			room.RoomName = roomName;
+			room.Capacity = capacity;
+			room.Description = description;
+			
 			_db.SaveChanges();
 		}
 	
