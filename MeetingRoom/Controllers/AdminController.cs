@@ -36,35 +36,37 @@ public class AdminController : Controller
 
 		var rolesJson = JsonConvert.SerializeObject(roles, Formatting.Indented);
 
-		ViewBag.Roles = rolesJson;
+		ViewBag.Roles = roles;
 
 		return View(users);
 	}
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	[Route("Admin/UpdateUser/{userId:long}")]
-	public IActionResult UpdateUser(long? userId, User model)
+	[Route("Admin/UpdateUser")]
+	public IActionResult UpdateUser(User model)
 	{
+		System.Console.WriteLine("Passed Username: " + model.Username);
+		System.Console.WriteLine("Passed Email: " + model.Email);
+		System.Console.WriteLine("Passed Role Id: " + model.RoleId);
+		System.Console.WriteLine("Passed User Id: " + model.UserId);
+
+		var user = _db.Users?.Find(model.UserId);
 		using (_db)
 		{
-			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-
-			if (user != null && user.Roles?.RoleName != null)
+			if (user != null)
 			{
-				if (!user.Roles.RoleName.Equals("Admin"))
-				{
-					user.RoleId = model.RoleId;
-					_db.SaveChanges();
-				}
+				user.RoleId = model.RoleId;
 			}
+			_db.SaveChanges();
 		}
+
 		return RedirectToAction("Users");
 	}
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	[Route("Admin/DeleteUser/{userId:long}")]
+	[Route("Admin/DeleteUser")]
 	public IActionResult DeleteUser(long? userId)
 	{
 		using (_db)

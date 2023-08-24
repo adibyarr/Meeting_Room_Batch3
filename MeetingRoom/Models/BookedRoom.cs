@@ -27,8 +27,10 @@ public partial class BookedRoom
     public long UserId { get; set; }
 
     [ForeignKey("RoomId")]
+    [InverseProperty("BookedRooms")]
     public virtual Room Rooms { get; set; } = new Room();
 
     [ForeignKey("UserId")]
+    [InverseProperty("BookedRooms")]
     public virtual User Users { get; set; } = new User();
 }

@@ -18,5 +18,6 @@ public partial class Room
 
     public string? Description { get; set; }
     
+    [InverseProperty("Rooms")]
     public virtual ICollection<BookedRoom> BookedRooms { get; set;} = new List<BookedRoom>();
 }

@@ -29,10 +29,12 @@ public partial class User
     [DataType(DataType.Password)]
     public string? Password { get; set; }
 
-    public long RoleId { get; set; }
+    public long? RoleId { get; set; }
 
     [ForeignKey("RoleId")]
+    [InverseProperty("Users")]
     public virtual Role Roles { get; set; } = new Role();
 
+    [InverseProperty("Users")]
     public virtual ICollection<BookedRoom> BookedRooms { get; set; } = new List<BookedRoom>();
 }
