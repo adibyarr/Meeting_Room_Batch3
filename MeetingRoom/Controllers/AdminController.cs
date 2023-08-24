@@ -33,7 +33,8 @@ public class AdminController : Controller
 		return View(users);
 		
 	}
-	public IActionResult Account(int? userId)
+	
+	public IActionResult Account(long? userId)
 	{
 		userId = (int?)TempData.Peek("UserID");
 		User user = _db.Users.Find((long)userId);
@@ -42,27 +43,27 @@ public class AdminController : Controller
 		{
 			return View(user);
 		}
+		
 		return RedirectToAction("Users");
 	}
 	
-	[HttpGet]
-	[Route("Admin/SaveProfile")]
-	public IActionResult SaveProfile(long? userId)
-	
-	{
-			var user = _db.Users.Find(userId);
-			if(user != null)
-			{
-				return View("NotFound");
-			}
-			var model = new User
-			{
-				UserName = user.UserName,
-				Email = user.Email
-			};
+	// [HttpGet]
+	// [Route("Admin/SaveProfile")]
+	// public IActionResult SaveProfile(long? userId)
+	// {
+	// 		var user = _db.Users.Find(userId);
+	// 		if(user != null)
+	// 		{
+	// 			return View("NotFound");
+	// 		}
+	// 		var model = new User
+	// 		{
+	// 			UserName = user.UserName,
+	// 			Email = user.Email
+	// 		};
 		
-			return View(model);
-	}
+	// 		return View(model);
+	// }
 	
 	[HttpPost]
 	[Route("Admin/EditProfile")]
