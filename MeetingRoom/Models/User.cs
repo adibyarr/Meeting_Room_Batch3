@@ -16,17 +16,25 @@ public partial class User
 	[DataType(DataType.Text)]
 	public string Username { get; set; } = null!;
 
-	[DataType(DataType.EmailAddress)]
-	[EmailAddress]
-	public string? Email { get; set; }
+    [DataType(DataType.Text)]
+    public string FirstName { get; set; } = null!;
+
+    [DataType(DataType.Text)]
+    public string LastName { get; set; } = null!;
+
+    [DataType(DataType.EmailAddress)]
+    [EmailAddress]
+    public string? Email { get; set; }
 
 	[DataType(DataType.Password)]
 	public string? Password { get; set; }
 
-	[DataType(DataType.Text)]
-	public string? Role { get; set; }
+    public long? RoleId { get; set; }
 
-	[DataType(DataType.Custom)]
-	public bool IsActive { get; set; }
-	
+    [ForeignKey("RoleId")]
+    [InverseProperty("Users")]
+    public virtual Role Roles { get; set; } = new Role();
+
+    [InverseProperty("Users")]
+    public virtual ICollection<BookedRoom> BookedRooms { get; set; } = new List<BookedRoom>();
 }

@@ -3,6 +3,7 @@ using System;
 using MeetingRoomWebApp.AutoGen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MeetingRoom.Migrations
 {
     [DbContext(typeof(MeetingRoomDbContext))]
-    partial class MeetingRoomDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230824030316_ChangeTableRelations")]
+    partial class ChangeTableRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");
@@ -106,8 +109,7 @@ namespace MeetingRoom.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("RoleId")
-                        .IsRequired()
+                    b.Property<long>("RoleId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
