@@ -67,16 +67,17 @@ public class AdminController : Controller
 	[HttpPost]
 	[Route("Admin/EditProfile")]
 	// [ValidateAntiForgeryToken]
-	public IActionResult EditProfile(long? userId, User user)
+	// public IActionResult EditProfile(long? userId, User editedUser)
+	public IActionResult EditProfile(long userId, string userName, string email, string role)
 	{
 		Console.WriteLine("CHECK 1");
 		if(!ModelState.IsValid)
 		{
 			Console.WriteLine("CHECK 2");
-			return View("SaveProfile", user);
+			return View("SaveProfile");
 		}
 		
-		var userProfile =  _db.Users.Find(userId);
+		User userProfile =  _db.Users.Find(userId);
 		Console.WriteLine("CHECK 3");
 		
 		if(userProfile == null )
@@ -85,13 +86,18 @@ public class AdminController : Controller
 			return View("NotFound");
 		}
 		
-		userProfile.UserName = user.UserName;
-		userProfile.Email = user.Email;
+		userProfile.UserName = userName;
+		userProfile.Email = email;
 		
+		Console.WriteLine($"found userID : {userProfile.UserId}");
 		Console.WriteLine($"found username : {userProfile.UserName}");
 		Console.WriteLine($"found email : {userProfile.Email}");
-		Console.WriteLine($"passed username : {user.UserName}");
-		Console.WriteLine($"passed email : {user.Email}");
+		Console.WriteLine($"found role : {userProfile.Role}");
+		Console.WriteLine("---");
+		Console.WriteLine($"passed userId : {userId}");
+		Console.WriteLine($"passed username : {userName}");
+		Console.WriteLine($"passed email : {email}");
+		Console.WriteLine($"passed role : {role}");
 		Console.WriteLine("CHECK 5");
 		
 		return RedirectToAction("Account");
