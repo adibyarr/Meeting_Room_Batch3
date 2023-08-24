@@ -1,8 +1,8 @@
 @model MeetingRoomWebApp.AutoGen.User
 
 @{
-    ViewBag.Title = "Account";
-    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Account";
+   
 }
 
 <div class="container rounded bg-white mt-5">
@@ -78,8 +78,8 @@
                     <td>
                         <select name="Role" id="role" class="form-control" style="text-align: center"> 
                             <div>
-                                <option value="2">Manager</option>
-                                <option value="">Engineer</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Engineer">Engineer</option>
                                 <option value="Admin">Admin</option>
                             </div>
                         </select>

@@ -9,23 +9,24 @@ namespace MeetingRoomWebApp.AutoGen;
 
 public partial class User
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long UserId { get; set; }
+	[Key]
+	[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+	public long UserId { get; set; }
 
-    [DataType(DataType.Text)]
-    public string Username { get; set; } = null!;
+	[DataType(DataType.Text)]
+	public string Username { get; set; } = null!;
 
-    [DataType(DataType.EmailAddress)]
-    [EmailAddress]
-    public string? Email { get; set; }
+	[DataType(DataType.EmailAddress)]
+	[EmailAddress]
+	public string? Email { get; set; }
 
-    [DataType(DataType.Password)]
-    public string? Password { get; set; }
+	[DataType(DataType.Password)]
+	public string? Password { get; set; }
 
-    [DataType(DataType.Text)]
-    public string? Role { get; set; }
+	[DataType(DataType.Text)]
+	public string? Role { get; set; }
 
-    [DataType(DataType.Custom)]
-    public bool IsActive { get; set; }
+	[DataType(DataType.Custom)]
+	public bool IsActive { get; set; }
+	
 }
