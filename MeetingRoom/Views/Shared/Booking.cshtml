@@ -1,0 +1,100 @@
+@model MeetingRoomWebApp.AutoGen.User
+
+@{
+    ViewBag.Title = "Create Event";
+    if (Model.Roles.RoleName == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">Booking</h1>
+    <div class="container rounded bg-white mt-5"></div>
+    <div class="mx-auto" style="max-width: 600px;">
+        <form method="post" action="/Booking/CreateRoom">
+            <table class="table table-borderless">
+                <tr>
+                    <td>
+                        <p>Date : </p>
+                    </td>
+                    <td>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="text" class="form-control" name="roomName" id="datepicker" required"
+                                        placeholder="MM/DD/YYYY" />
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Time : </p>
+                    </td>
+                    <td>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="text" class="form-control" required placeholder="HH:MM AM/PM"
+                                        id="timepicker" />
+                                </div>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control" required placeholder="HH:MM AM/PM"
+                                        id="timepicker2" />
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Capacity : </p>
+                    </td>
+                    <td>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <input type="number" class="form-control" name="capacity" min="1" required"
+                                        placeholder="Required Room Capacity" />
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <input type="submit" class="btn btn-success" value="Find Room" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+<script>
+    $(function () {
+        $("#datepicker").datepicker();
+    });
+
+    var now = new Date();
+    $('#timepicker').timepicker({ 
+        timeFormat: 'hh:mm p',
+        minTime: now,
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+
+    $('#timepicker2').timepicker({ 
+        timeFormat: 'hh:mm p',
+        minTime: now,
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+    });
+</script>

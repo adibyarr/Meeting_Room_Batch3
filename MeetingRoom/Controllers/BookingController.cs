@@ -1,5 +1,7 @@
 using MeetingRoomWebApp.AutoGen;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace MeetingRoom.Controllers;
 
@@ -12,13 +14,20 @@ public class BookingController : Controller
 		_db = db;
 	}
 
-	public IActionResult Index()
+	public IActionResult Index(long? userId)
 	{
-		return View("Booking");
+		// userId = Convert.ToInt32(TempData["UserID"]);
+		userId = (int?)TempData.Peek("UserID");
+		using (_db)
+		{
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
+			return View("Booking",user);
+		}
 	}
 	
 	public IActionResult Book()
 	{
+		// booking logic
 		return View("Booking");
 	}
 }
