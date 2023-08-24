@@ -1,7 +1,7 @@
 @model MeetingRoomWebApp.AutoGen.User
 
 @{
-    ViewBag.Title = "Create Event";
+    ViewBag.Title = "Booking";
     if (Model.Roles.RoleName == "Admin")
     {
         Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -12,7 +12,8 @@
     <h1 class="display-4">Booking</h1>
     <div class="container rounded bg-white mt-5"></div>
     <div class="mx-auto" style="max-width: 600px;">
-        <form method="post" action="/Booking/CreateRoom">
+        <form method="post" action="/Booking/AvailableRooms">
+            <input type="hidden" name="userId" value="@Model.UserId" />
             <table class="table table-borderless">
                 <tr>
                     <td>
@@ -22,7 +23,11 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" name="roomName" required id="datepicker"
+                                    <input type="text" class="form-control" name="startDate" required id="datepicker"
+                                        placeholder="MM/DD/YYYY" />
+                                </div>
+                                <div class="col-sm">
+                                    <input type="text" class="form-control" name="endDate" required id="datepicker2"
                                         placeholder="MM/DD/YYYY" />
                                 </div>
                             </div>
@@ -37,11 +42,11 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" required placeholder="HH:MM AM/PM"
+                                    <input type="text" class="form-control" name="startTime" required placeholder="HH:MM AM/PM"
                                         id="timepicker" />
                                 </div>
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" required placeholder="HH:MM AM/PM"
+                                    <input type="text" class="form-control" name="endTime" required placeholder="HH:MM AM/PM"
                                         id="timepicker2" />
                                 </div>
                             </div>
@@ -56,7 +61,7 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="number" class="form-control" name="capacity" required min="1" 
+                                    <input type="number" class="form-control" name="capacity" required min="1" id="capacity" 
                                         placeholder="Required Room Capacity" />
                                 </div>
                             </div>
@@ -81,20 +86,24 @@
         minDate: 0
     });
 
+    $("#datepicker2").datepicker({
+        minDate: 0
+    });
+
     var now = new Date();
     $('#timepicker').timepicker({ 
         timeFormat: 'hh:mm p',
         minTime: now,
         dynamic: false,
         dropdown: true,
-        scrollbar: true
+        scrollbar: true,
     });
 
-    $('#timepicker2').timepicker({ 
+    $('#timepicker2').timepicker({
         timeFormat: 'hh:mm p',
         minTime: now,
         dynamic: false,
         dropdown: true,
         scrollbar: true
-    });
+    });  
 </script>
