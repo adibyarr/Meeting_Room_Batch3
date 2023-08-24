@@ -13,4 +13,5 @@ public partial class Role
     
     [InverseProperty("Roles")]
     public virtual ICollection<User> Users { get; set; } = new List<User>();
+
 }
