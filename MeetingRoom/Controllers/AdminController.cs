@@ -4,6 +4,8 @@ using MeetingRoom.Models;
 using MeetingRoomWebApp.AutoGen;
 using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Newtonsoft.Json;
 
 namespace MeetingRoom.Controllers;
 
@@ -29,6 +31,13 @@ public class AdminController : Controller
 	public IActionResult Users()
 	{
 		List<User> users = _db.Users.Include(u => u.Roles).ToList();
+
+		var roles = _db.Roles.Select(r => new { r.RoleId, r.RoleName }).ToList();
+
+		var rolesJson = JsonConvert.SerializeObject(roles, Formatting.Indented);
+
+		ViewBag.Roles = rolesJson;
+
 		return View(users);
 	}
 

@@ -88,6 +88,9 @@
     // Update User Popup
     function popupUpdateUser(username, email, role, userId) {
 
+        // var roles = JSON.parse('@Html.Raw(@ViewBag.Roles)');
+        console.log(roles);
+
         $(".modal-title").html("Edit User");
 
         $(".modal-body").html(
