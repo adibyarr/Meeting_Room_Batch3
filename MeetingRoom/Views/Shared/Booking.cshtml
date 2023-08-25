@@ -90,10 +90,10 @@
         minDate: 0
     });
 
-    var now = new Date();
+    @* var now = new Date(); *@
     $('#timepicker').timepicker({ 
         timeFormat: 'hh:mm p',
-        minTime: now,
+        @* minTime: now, *@
         dynamic: false,
         dropdown: true,
         scrollbar: true,
@@ -101,7 +101,7 @@
 
     $('#timepicker2').timepicker({
         timeFormat: 'hh:mm p',
-        minTime: now,
+        @* minTime: now, *@
         dynamic: false,
         dropdown: true,
         scrollbar: true
