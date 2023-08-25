@@ -12,7 +12,7 @@ public class AdminController : Controller
 
 	public AdminController(MeetingRoomDbContext db)
 	{
-        _db = db;
+		_db = db;
 	}
 
 	public IActionResult Index(int? userId)
@@ -40,6 +40,13 @@ public class AdminController : Controller
 	{
 		List<Room> roomList = _db.Rooms.ToList();
 		return View("RoomList",roomList);
+	}
+	public IActionResult Users()
+	{
+		List<User> users = _db.Users.ToList();
+
+		return View(users);
+		
 	}
 	public IActionResult Account(long? userId)
 	{
