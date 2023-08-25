@@ -46,40 +46,34 @@ public class AdminController : Controller
 	[Route("Admin/UpdateUser")]
 	public IActionResult UpdateUser(User model)
 	{
-		if (ModelState.IsValid)
+		var user = _db.Users?.Find(model.UserId);
+		using (_db)
 		{
-			var user = _db.Users?.Find(model.UserId);
-			using (_db)
+			if (user != null)
 			{
-				if (user != null)
-				{
-					user.RoleId = model.RoleId;
-				}
-				_db.SaveChanges();
+				user.RoleId = model.RoleId;
 			}
+			_db.SaveChanges();
 		}
+
 		return RedirectToAction("Users");
 	}
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	[Route("Admin/DeleteUser")]
+	[Route("Admin/DeleteUser/{userId:long}")]
 	public IActionResult DeleteUser(long? userId)
 	{
-
-		if (ModelState.IsValid)
+		using (_db)
 		{
-			using (_db)
-			{
-				var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
 
-				if (user != null && user.Roles?.RoleName != null)
+			if (user != null && user.Roles?.RoleName != null)
+			{
+				if (!user.Roles.RoleName.Equals("Admin"))
 				{
-					if (!user.Roles.RoleName.Equals("Admin"))
-					{
-						_db.Users?.Remove(user);
-						_db.SaveChanges();
-					}
+					_db.Users?.Remove(user);
+					_db.SaveChanges();
 				}
 			}
 		}
