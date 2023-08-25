@@ -142,8 +142,9 @@
                 <p>Are you sure you want to delete user <strong>${username}</strong>?</p>
             </div>
             <div style="text-align: right">
-                <form method="post" action="/Admin/DeleteUser/${userId}">
+                <form method="post" action="/Admin/DeleteUser">
                 @Html.AntiForgeryToken()
+                    <input type="text" name="UserId" value="${userId}" hidden />
                     <input type="submit" class="btn btn-danger" value="Delete"/>
                     <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
                 <form>
