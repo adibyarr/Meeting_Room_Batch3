@@ -93,7 +93,7 @@
         $(".modal-body").html(
             `
             <form method="post" action="/Admin/UpdateUser">
-            @Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
                 <table class="table table-borderless">
                 <tr>
                     <td>Username: </td>
@@ -144,7 +144,7 @@
             </div>
             <div style="text-align: right">
                 <form method="post" action="/Admin/DeleteUser/${userId}">
-                @Html.AntiForgeryToken()
+    @Html.AntiForgeryToken()
                     <input type="submit" class="btn btn-danger" value="Delete"/>
                     <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
                 <form>

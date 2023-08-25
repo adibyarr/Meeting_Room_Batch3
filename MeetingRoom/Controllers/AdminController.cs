@@ -46,11 +46,6 @@ public class AdminController : Controller
 	[Route("Admin/UpdateUser")]
 	public IActionResult UpdateUser(User model)
 	{
-		System.Console.WriteLine("Passed Username: " + model.Username);
-		System.Console.WriteLine("Passed Email: " + model.Email);
-		System.Console.WriteLine("Passed Role Id: " + model.RoleId);
-		System.Console.WriteLine("Passed User Id: " + model.UserId);
-
 		var user = _db.Users?.Find(model.UserId);
 		using (_db)
 		{
@@ -66,7 +61,7 @@ public class AdminController : Controller
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	[Route("Admin/DeleteUser")]
+	[Route("Admin/DeleteUser/{userId:long}")]
 	public IActionResult DeleteUser(long? userId)
 	{
 		using (_db)
@@ -90,13 +85,13 @@ public class AdminController : Controller
 		List<Room> roomList = _db.Rooms.ToList();
 		return View("RoomList", roomList);
 	}
-	
+
 	/*
 	TODO:
 	[ ] add warning feature if room name already exist
 	[x] add edit room detail feature	
 	 */
-	
+
 	[HttpPost]
 	[Route("Admin/CreateRoom")]
 	public IActionResult CreateRoom(string roomName, int capacity, string description)
@@ -109,9 +104,9 @@ public class AdminController : Controller
 				Capacity = capacity,
 				Description = description
 			};
-			
+
 			var roomExisted = _db.Rooms.Where(room => room.RoomName == roomName).ToList();
-			
+
 			if ((roomExisted is null) || !roomExisted.Any())
 			{
 				// return RedirectToAction("RoomList");
@@ -122,7 +117,7 @@ public class AdminController : Controller
 		}
 		return RedirectToAction("RoomList");
 	}
-	
+
 	[HttpPost]
 	[Route("Admin/DeleteRoom")]
 	public IActionResult DeleteRoom(long roomId)
@@ -130,8 +125,8 @@ public class AdminController : Controller
 		if (ModelState.IsValid)
 		{
 			var room = _db.Rooms.Where(room => room.RoomId == roomId).ToList();
-			
-			Console.WriteLine($"DELETE 1. Room ID : {roomId}");	
+
+			Console.WriteLine($"DELETE 1. Room ID : {roomId}");
 			if ((room is null) || (!room.Any()))
 			{
 				Console.WriteLine($"DELETE 2. Room ID : {roomId}");
@@ -142,10 +137,10 @@ public class AdminController : Controller
 			_db.Rooms.RemoveRange(room);
 			_db.SaveChanges();
 		}
-	
+
 		return RedirectToAction("RoomList");
 	}
-	
+
 	[HttpPost]
 	[Route("Admin/EditRoom")]
 	public IActionResult EditRoom(long roomId, string roomName, long capacity, string description)
@@ -153,14 +148,60 @@ public class AdminController : Controller
 		if (ModelState.IsValid)
 		{
 			Room? room = _db.Rooms?.Find(roomId);
-			
+
 			room.RoomName = roomName;
 			room.Capacity = capacity;
 			room.Description = description;
-			
+
 			_db.SaveChanges();
 		}
-	
+
 		return RedirectToAction("RoomList");
+	}
+	public IActionResult Account(long? userId)
+	{
+		Console.WriteLine("--- INSIDE ACCOUNT ---");
+
+		userId = (int?)TempData.Peek("UserID");
+		var user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
+
+		// Console.WriteLine($"from _db UserName : {user.Username}");
+		// Console.WriteLine($"from _db Email : {user.Email}");
+		// Console.WriteLine($"from _db Role : {user.Roles}");
+
+		if (user != null)
+		{
+			return View("Account", user);
+		}
+
+		return View("Account", user);
+	}
+
+	[HttpPost]
+	public IActionResult EditProfile(long userId, string userName, string firstName, string lastName)
+	{
+		if (ModelState.IsValid)
+		{
+			Console.WriteLine("--- INSIDE EDIT PROFILE ---");
+
+			Console.WriteLine($"passed UserId : {userId}");
+			Console.WriteLine($"passed UserName : {userName}");
+			// Console.WriteLine($"passed Email : {email}");
+			// Console.WriteLine($"passed role : {role}");
+
+			User userProfile = _db.Users.Find(userId);
+
+			Console.WriteLine($"from _db UserId : {userProfile.UserId}");
+			Console.WriteLine($"from _db UserName : {userProfile.Username}");
+
+
+			userProfile.Username = userName;
+			userProfile.FirstName = firstName;
+			userProfile.LastName = lastName;
+
+			_db.SaveChanges();
+		}
+
+		return RedirectToAction("Account");
 	}
 }
