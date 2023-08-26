@@ -1,5 +1,5 @@
 @model IEnumerable<MeetingRoomWebApp.AutoGen.User>
-    
+
 @{
     ViewBag.Title = "User List";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -48,7 +48,7 @@
                         </td>
                         <td scope="col">
                             <button class="btn btn-warning"
-                                onclick="popupUpdateUser('@user.Username', '@user.Email', '@user.Roles?.RoleName', '@user.UserId')">
+                                onclick="popupUpdateUser('@user.Username', '@user.Email', '@user.RoleId', '@user.UserId')">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                             @if (@user.Roles?.RoleName != null && @user.Roles.RoleName.Equals("Admin"))
@@ -85,15 +85,32 @@
     </div>
 </div>
 <script>
+    function getRolesJson() {
+        return $.ajax({
+            "url": "http://localhost:5239/Admin/GetRoles",
+            "method": "GET",
+		    "async": false
+        })
+    }
+
     // Update User Popup
     function popupUpdateUser(username, email, role, userId) {
+        var roles = getRolesJson().responseJSON;
+        console.log(roles);
+        console.log(roles[0].roleId == role);
+        console.log(roles[0].roleName);
+        
+        var rolesOpt = "";
+        for (i = 0; i < roles.length; i++) {
+            rolesOpt += `<option value="${roles[i].roleId}" ${roles[i].roleId == role ? 'selected' : ''}>${roles[i].roleName}</option>`;
+        }
 
         $(".modal-title").html("Edit User");
 
         $(".modal-body").html(
             `
             <form method="post" action="/Admin/UpdateUser">
-    @Html.AntiForgeryToken()
+            @Html.AntiForgeryToken()
                 <table class="table table-borderless">
                 <tr>
                     <td>Username: </td>
@@ -112,9 +129,7 @@
                     <td>
                         <select name="RoleId" id="role" class="form-control" style="text-align: center">
                             <div>
-                                <option value="1">Admin</option>
-                                <option value="2">Manager</option>
-                                <option value="3">Engineer</option>
+                                ${rolesOpt}
                             </div>
                         </select>
                     </td>
@@ -144,7 +159,7 @@
             </div>
             <div style="text-align: right">
                 <form method="post" action="/Admin/DeleteUser/${userId}">
-    @Html.AntiForgeryToken()
+                @Html.AntiForgeryToken()
                     <input type="submit" class="btn btn-danger" value="Delete"/>
                     <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
                 <form>
