@@ -1,11 +1,34 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+}<style>
+    {
+        .responsiveCal {
+            position: relative; padding-bottom: 75%; height: 0; overflow: hidden;}
+ 
+.responsiveCal iframe {
+ 
+position: absolute; top:0; left: 0; width: 100%; height: 100%;
+ 
 }
+    }
+</style>
 
-<div class="text-center">
-    <h1 class="display-4">Meeting Room</h1>
-    <p>Welcome @Context.Session.GetString("Username") to Meeting Room Reservation Website</p>
-    <p>Role: @Context.Session.GetString("Role"), Email: @Context.Session.GetString("Email"), User ID:
-        @Context.Session.GetInt32("UserID")</p>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">Room Of Formulatrix Building</a>.</p>
-</div>
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Calendar Meeting Room</h1>
+        <div class="responsiveCal">
+            <div class="mx-auto" style="max-width: 800px;">
+                        
+                       <iframe src="https://calendar.google.com/calendar/embed?src=adibyarizaldy16%40gmail.com&amp;color=%231B887A&ctz=Asia%2FJakarta" style="border: 20" width="800" height="600" frameborder="" scrolling="no"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker();
+        });
+    </script>
+</body>

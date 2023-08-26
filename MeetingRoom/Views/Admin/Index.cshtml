@@ -2,37 +2,42 @@
 @{
     ViewBag.Title = "Home";
     Layout = "/Views/Shared/_AdminLayout.cshtml";
+    int i = 1;
 }
 
-<main> 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Datepicker Calendar</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        .ui-datepicker {
+            font-size: 20px;
+            width: 600px;
+            color: blue;
+        }
+    
+    </style>
+</head>
+<body>
     <div class="text-center">
-        <h1 class="display-4">Calendar</h1>
-        <div class="container rounded bg-white mt-5"></div>
-        <div class="mx-auto" style="max-width: 600px;"></div>
-            
-                
+        <h1 class="display-4">Calendar Meeting Room</h1>
+        @* <div class="container rounded mt-10"> *@
+            <div class="mx-auto" style="max-width: 800px;">
+                       <iframe src="https://calendar.google.com/calendar/embed?src=adibyarizaldy16%40gmail.com&amp;color=%231B887A&ctz=Asia%2FJakarta" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</main>
-<script>
-    $("#datepicker").datepicker({
-        minDate: 0
-    });
 
-    var now = new Date();
-    $('#timepicker').timepicker({ 
-        timeFormat: 'hh:mm p',
-        minTime: now,
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true
-    });
-
-    $('#timepicker2').timepicker({ 
-        timeFormat: 'hh:mm p',
-        minTime: now,
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true
-    });
-</script>
+    <script>
+        $(document).ready(function () {
+            $("#datepicker").datepicker();
+        });
+    </script>
+</body>
+</html>
