@@ -103,6 +103,9 @@ public class BookingController : Controller
 				parsedEndDate.ToDateTime(parsedEndTime)
 			);
 			
+			// this list contains all events ranging from datetime Start - datetime End
+			// not just events that only occurs in particular time in some days.
+			// conclusion : still need some filtering process
 			List<Event> eventList = events.Items.ToList();
 			
 			CalendarManager.ListingEvents(eventList);
