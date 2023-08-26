@@ -22,7 +22,7 @@ public class BookingController : Controller
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-			return View("Booking",user);
+			return View("Booking", user);
 		}
 	}
 	

@@ -23,7 +23,8 @@ public class AdminController : Controller
 		userId = (int?)TempData.Peek("UserID");
 		if (userId != null)
 		{
-			return View();
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
+			return View("Home", user);
 		}
 		return RedirectToAction("Index", "Login");
 	}
@@ -39,6 +40,13 @@ public class AdminController : Controller
 		ViewBag.Roles = roles;
 
 		return View(users);
+	}
+
+	public JsonResult GetRoles()
+	{
+		var roles = _db.Roles.Select(r => new { r.RoleId, r.RoleName });
+
+		return Json(roles);
 	}
 
 	[HttpPost]

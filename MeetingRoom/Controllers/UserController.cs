@@ -17,10 +17,11 @@ public class UserController : Controller
 
 	public IActionResult Index(int? userId)
 	{
-		userId = HttpContext.Session.GetInt32("UserID");
+		userId = (int?)TempData.Peek("UserID");
 		if (userId != null)
 		{
-			return View();
+			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
+			return View("Home", user);
 		}
 		return RedirectToAction("Index", "Login");
 	}
@@ -35,32 +36,32 @@ public class UserController : Controller
 	{
 		return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 	}
-	
+
 	public IActionResult RoomList()
 	{
 		List<Room> roomList = _db.Rooms.ToList();
-		return View("RoomList",roomList);
+		return View("RoomList", roomList);
 	}
 	public IActionResult Account(long? userId)
 	{
 		Console.WriteLine("--- INSIDE ACCOUNT ---");
-		
+
 		userId = (int?)TempData.Peek("UserID");
 		var user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-		
+
 		// Console.WriteLine($"from _db UserName : {user.Username}");
 		// Console.WriteLine($"from _db Email : {user.Email}");
 		// Console.WriteLine($"from _db Role : {user.Roles}");
-		
+
 		if (user != null)
 		{
-			return View("Account",user);
+			return View("Account", user);
 		}
-		
-		return View("Account",user);
+
+		return View("Account", user);
 	}
 	[HttpPost]
-	
+
 	public IActionResult EditProfile(long userId, string userName, string firstName, string lastName)
 	{
 		if (ModelState.IsValid)
@@ -71,21 +72,21 @@ public class UserController : Controller
 			Console.WriteLine($"passed UserName : {userName}");
 			// Console.WriteLine($"passed Email : {email}");
 			// Console.WriteLine($"passed role : {role}");
-			
+
 			User userProfile = _db.Users.Find(userId);
-			
+
 			Console.WriteLine($"from _db UserId : {userProfile.UserId}");
 			Console.WriteLine($"from _db UserName : {userProfile.Username}");
 			Console.WriteLine($"from _db Email : {userProfile.Email}");
 			Console.WriteLine($"from _db role : {userProfile.Roles}");
-			
+
 			userProfile.Username = userName;
 			userProfile.FirstName = firstName;
 			userProfile.LastName = lastName;
 
 			_db.SaveChanges();
 		}
-		
+
 		return RedirectToAction("Account");
 	}
 }
