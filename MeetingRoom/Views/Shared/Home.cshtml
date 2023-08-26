@@ -1,0 +1,13 @@
+@model MeetingRoomWebApp.AutoGen.User
+
+@{
+    ViewBag.Title = "Home";
+    if (Model.Roles.RoleName == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+}
+
+<iframe
+    src="https://calendar.google.com/calendar/embed?src=d69d87c4b0d6ef4cd55b626a2e668e5fd526b6213f326401aef9b3745a06a59a%40group.calendar.google.com&ctz=Asia%2FJakarta"
+    style="border: 0" width="1300" height="600" frameborder="0" scrolling="no"></iframe>
