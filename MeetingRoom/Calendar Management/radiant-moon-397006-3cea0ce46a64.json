@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "radiant-moon-397006",
+  "private_key_id": "3cea0ce46a643c7db1ecddb7300c0603e96710da",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/4mD7IXCe1Oqn\njqUdi+7VVJma8vwHehiXM8svzoSGS42iP9AKP5kBixOwuMUSaWL6Ox76KMvsqavA\nzd9JFxCH1vLWisquKRwionuy7HJEseuaGN+650FSym/wEkrpRqnH0On6VSfCqb9O\nPaRKvUNWDAm2EgXFlVkcg7XEIy+FDTl/4hjgnbs7nhFYPixtJTpqS8ELOuDdWFDv\nVkdlUMsYiYUqY2S7rLwA1PmehJ6AEAKLxnPQHBgf5T8eUUdL+5wkDbqys2mYmAwI\ncLnuXSaA8slN8yEMbYsPuD+Q6VKasnatz4eLGXNgKY2+bIcyTcJfNfEmMrXLOXNN\n/mOiIHLrAgMBAAECggEAWpdpTAcsoYBKTNM2ty1ik8s+Pf5r6KfHRlOIoUhyHuk6\ntBhGgyAlf6oGoM+LEzc4KIWTCW4LYO92DC/mNB60ij18JrgeGn2EMAHgPsgM5svN\nPNJzhk059PloQcKRJXNcIt9KKAreG7SCglDt6O9UBCLoztHRccgh6ylvvmsSO1EC\nOvM9b3Dn8U7UjBmu8Jz/w6NFgmiI5g6FvAEsnGViwgEaByc5vURZApmo5fJGxKbk\nXbcMx3r/pmi/peKSHYuKqn62B8UdlKSInj3vlZMsSMeuR45bXFheSGqY1hjy8unK\nJ59cMlfSYLCKFCCB7LpNHip8HlZ8iteOmlWkhK6VSQKBgQDuNenyReJ//AO8k7LZ\nWZH3v86cEpKB53JotYg8gJG62H2hdPnc7i+IrNkNIU9e2Vgp8plYlk6eD1NVZ6GJ\ndlT5YkKp4JHlCIgOYq4jjJLIdTFR/lpn3KYqAtH8Rnj40S6ANYQHHUnHu0ajz68C\nMJ/aQva/DtSxQKwieY772wICBwKBgQDONs2lIVOwlfu7TCIwWUyVF7pJYxM5hEMW\nqY9a5YYr5eVqfsUW4KzhU6XH8EuXHUKF9nffaPcXz1HD/xBhMRZwIzS56KJt3qNN\nyhxTnctPzpzQBVE65cvw6K+cu7Nq+ReRJ1b2X+T+kXoJcSfSMOVmgWfgKlviU4fE\nw2wUnXN+/QKBgQCjt2YsXp+G+rvOtWwsOYU60xa66YDLyzg0gt85RdvioLvnZa/8\nia8drj4W6hfUxmfznIqL+fHabAoIHotFIJDSPRg4DOH4mV55FJU+VXTkVLcq9TdJ\nPrrtELclPYIS8CGXeDBfe1+j6DBqkWhkhuq2ZWOUeCryD9K+dvEwY5sDrQKBgBnv\nBnnH8TB6DEiH0Jzn/huZ+lGUZiyLl6xX8rFpwC/xH6L/AmZYJyXHUUgNzlPY2C7k\nyjqMhta1ugC+KR8v/zRnGRBwU00h/MOhsWJKq/EDePEoWgjgMX/Ao6VAbdX8MZyN\nqAAgGzpwrTpWwr1KbO8xQxEMArY57w8tzH/jNU05AoGAKC2afhw7sAdI6DNGNAIZ\nl4itbjL/wuWh1adK4LCB2J1PKauqfVaa8Fb4Vn7y3R349IP/VhkPdBjlj2Bt9crV\nZP+gAD5Z3Lov5w1ma9X2ap7ZHO+XvCf6hc0A7TSkC2L7GumnCbQW1j0Vt2LDWHZ5\nY08cyQyQGk6iLMTPgo0iBJ4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "meeting-room-service-account@radiant-moon-397006.iam.gserviceaccount.com",
+  "client_id": "117913177611531315780",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/meeting-room-service-account%40radiant-moon-397006.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
