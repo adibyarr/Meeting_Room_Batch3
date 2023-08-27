@@ -7,7 +7,7 @@ namespace CalendarAPI;
 
 public static class CalendarManager
 {
-	public static CalendarService GenerateService(ServiceAccountCredential credential)
+	public static CalendarService GenerateService(UserCredential credential)
 	{
 		var service = new CalendarService(new BaseClientService.Initializer()
 		{
@@ -90,9 +90,9 @@ public static class CalendarManager
 			Start = start,
 			End = end,
 		};
-		
+
 		var InsertRequest = service.Events.Insert(eventInsert, calendar.Id);
-		
+
 		try
 		{
 			InsertRequest.Execute();

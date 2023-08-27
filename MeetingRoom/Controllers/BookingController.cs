@@ -89,7 +89,8 @@ public class BookingController : Controller
 		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
 		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
 		
-		ServiceAccountCredential credential = ServiceAccount.GenerateCredential();
+		// ServiceAccountCredential credential = ServiceAccount.GenerateCredential();
+		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		
 		foreach (var room in rooms)
