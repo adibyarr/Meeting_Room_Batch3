@@ -7,7 +7,7 @@ public static class ServiceAccount
 {
 	public static ServiceAccountCredential GenerateCredential()
 	{
-		string jsonFile = ".\\Calendar Management\\radiant-moon-397006-3cea0ce46a64.json"; // change this value to your own personal service account json
+		string jsonFile = ".\\Calendar Management\\Credentials\\radiant-moon-397006-3cea0ce46a64.json"; // change this value to your own personal service account json
 		string[] Scopes = { CalendarService.Scope.Calendar };
 		ServiceAccountCredential credential;
 
