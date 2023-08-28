@@ -7,16 +7,25 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
+using NuGet.Common;
 
 namespace MeetingRoom.Controllers;
 
 public class BookingController : Controller
 {
 	private readonly MeetingRoomDbContext _db;
+	private static CalendarService? _service;
 	
 	public BookingController(MeetingRoomDbContext db)
 	{
 		_db = db;
+		InitService();
+	}
+	
+	public void InitService()
+	{
+		UserCredential credential = GoogleOAuth.GenerateCredential();
+		_service = CalendarManager.GenerateService(credential);
 	}
 
 	public IActionResult Index(long? userId)
@@ -34,28 +43,90 @@ public class BookingController : Controller
 	[Route("Booking/AvailableRooms")]
 	public IActionResult AvailableRooms(long? userId, string startDate, string endDate, string startTime, string endTime, int capacity)
 	{
-		DateOnly.TryParse(startDate, out DateOnly parsedStartDate);
-		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
-		Console.WriteLine(parsedStartDate);
-		Console.WriteLine(parsedEndDate);
+		UserCredential credential = GoogleOAuth.GenerateCredential();
+		CalendarService service = CalendarManager.GenerateService(credential);
+		List<OptionRoom> optionRoomList = new();
 		
-		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
-		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
-		Console.WriteLine(parsedStartTime);
-		Console.WriteLine(parsedEndTime);
-		
-		Console.WriteLine($"parsed DateTime start : {parsedStartDate.ToDateTime(parsedStartTime)}");
-		Console.WriteLine($"parsed DateTime end : {parsedEndDate.ToDateTime(parsedEndTime)}");
-		Console.WriteLine($"DateTime now : {DateTime.Now}");
-		
-		List<Room> roomsCap = FilterCapacity(capacity);
-		foreach (var room in roomsCap)
+		if (startDate == null && 
+			endDate == null &&
+			startTime == null &&
+			endTime == null &&
+			capacity == 0)
 		{
-			Console.WriteLine($"{room.RoomName} : {room.Capacity}");
+			//	1. All Empty
+			optionRoomList = Filter();
+		} 
+		else if (startDate != null &&
+				endDate == null &&
+				startTime == null &&
+				endTime == null &&
+				capacity == 0)
+		{
+			// 2. startDate only
+			optionRoomList = Filter_SD(startDate);
+		} 
+		else if (startDate == null &&
+				endDate != null &&
+				startTime == null &&
+				endTime == null &&
+				capacity == 0)
+		{
+			// 3. endDateonly
+			optionRoomList = Filter_ED(endDate);
+		} 
+		else if (startDate != null &&
+				endDate != null &&
+				startTime == null &&
+				endTime == null &&
+				capacity == 0)
+		{
+			// 4. startDate and endDate
+			// Filter(startDate, endDate);
+		} 
+		else if (startDate == null &&
+				endDate == null &&
+				startTime != null &&
+				endTime == null &&
+				capacity == 0)
+		{
+			// 5. startTime only
+			// Filter(startTime);
+		} 
+		else if (startDate == null &&
+				endDate == null &&
+				startTime == null &&
+				endTime != null &&
+				capacity == 0)
+		{
+			// 6. endTime only
+			// Filter(endTime);
+		} 
+		else if (startDate == null &&
+				endDate == null &&
+				startTime != null &&
+				endTime != null &&
+				capacity == 0)
+		{
+			// 7. startTime and endTime
+			// Filter(startTime, endTime);
+		} 
+		else if (startDate == null &&
+				endDate == null &&
+				startTime == null &&
+				endTime == null &&
+				capacity != 0)
+		{
+			// 8. capacity only
+			// Filter(int capacity);
 		}
-		
-		FilterDate(roomsCap, startDate, endDate, startTime, endTime);
-		
+		else if (startDate != null &&
+				endDate != null &&
+				startTime != null &&
+				endTime != null &&
+				capacity != 0)
+		{
+			Filter_Complete(startDate, endDate, startTime, endTime, capacity);
+		}
 		userId = (int?)TempData.Peek("UserID");
 		
 		using (_db)
@@ -64,69 +135,282 @@ public class BookingController : Controller
 			return View("AvailableRooms",user);
 		}
 	}
-	
-	[Route("Booking/Book")]
-	public IActionResult Book()
-	{
-		// booking logic
-		return View("Booking");
-	}
 
-	private List<Room> FilterCapacity(int minCap)
+	private List<OptionRoom> Filter()
 	{
-		return _db.Rooms.Where(room => room.Capacity >= minCap).ToList();
-	}
-	
-	private void FilterDate(
-		List<Room> rooms, 
-		string startDate, 
-		string endDate, 
-		string startTime, 
-		string endTime)
-	{
-		DateOnly.TryParse(startDate, out DateOnly parsedStartDate);
-		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
-		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
-		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
-		DateTime start = parsedStartDate.ToDateTime(parsedStartTime);
-		DateTime end = parsedEndDate.ToDateTime(parsedEndTime);
+		// 1. All Empty
 		
-		UserCredential credential = GoogleOAuth.GenerateCredential();
-		CalendarService service = CalendarManager.GenerateService(credential);
+		DateTime start = DateTime.Now;
+		DateTime end = DateTime.Today.AddDays(1);
+		List<OptionRoom> optionRoomList = new();
 		
-		foreach (var room in rooms)
+		foreach (var room in _db.Rooms)
 		{
-			Calendar calendar = CalendarManager.GenerateCalendar(service, room.Link);
+			Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
 			
-			Events events = CalendarManager.MakeRequest(
-				service,
+			List<Event> events = CalendarManager.MakeRequest(
+				_service,
 				calendar,
 				start,
 				end
-			);
+			).Items.ToList();
 			
-			List<Event> eventList = events.Items.ToList();
+			if (events.Count > 0)
+			{
+				DateTime? optionStart = start;
+				DateTime? optionEnd = new();
+				Event lastEvent = new();
+				foreach (var singleEvent in events)
+				{
+					DateTime? singleEventStart = singleEvent.Start.DateTime;
+					DateTime? singleEventEnd = singleEvent.End.DateTime;
+					if (start < singleEventStart)
+					{
+						optionEnd = singleEventStart;
+						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						optionStart = singleEventEnd;
+					} 
+					else if (start > singleEventStart && start < singleEventEnd)
+					{
+						optionStart = singleEventEnd;
+					}
+					else 
+					{
+						optionStart = singleEventEnd;
+					}
+					lastEvent = singleEvent;
+				}
+				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+			}
 			
-			int totalDays = (end - start).Days;
+			if (events.Count == 0)
+			{
+				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+			}
+		}
+		
+		foreach(var room in optionRoomList)
+		{
+			Console.WriteLine("-----");
+			Console.WriteLine($"RoomName : {room.RoomName}");
+			Console.WriteLine($"Start : {room.StartDate}");
+			Console.WriteLine($"End : {room.EndDate}");
+		}
+		
+		return optionRoomList;
+	}
+	
+	private List<OptionRoom> Filter_SD(string startDate)
+	{
+		// 2. startDate only
+		
+		DateTime start;
+		DateTime end;
+		DateOnly.TryParse(startDate, System.Globalization.CultureInfo.InvariantCulture, out DateOnly parsedStartDate);
+		if (parsedStartDate == DateOnly.FromDateTime(DateTime.Now))
+		{
+			return Filter();
+		} 
+		else
+		{
+			start = new DateTime(parsedStartDate.Year, parsedStartDate.Month, parsedStartDate.Day, 0, 0, 0);
+			end = start.Date.AddDays(1);
+		}
+		List<OptionRoom> optionRoomList = new();
+		
+		foreach (var room in _db.Rooms)
+		{
+			Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+			
+			List<Event> events = CalendarManager.MakeRequest(
+				_service,
+				calendar,
+				start,
+				end
+			).Items.ToList();
+			
+			if (events.Count > 0)
+			{
+				DateTime? optionStart = start;
+				DateTime? optionEnd = new();
+				Event lastEvent = new();
+				foreach (var singleEvent in events)
+				{
+					DateTime? singleEventStart = singleEvent.Start.DateTime;
+					DateTime? singleEventEnd = singleEvent.End.DateTime;
+					if (start < singleEventStart)
+					{
+						optionEnd = singleEventStart;
+						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						optionStart = singleEventEnd;
+					} 
+					else 
+					{
+						optionStart = singleEventEnd;
+					}
+					lastEvent = singleEvent;
+				}
+				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+			}
+			
+			if (events.Count == 0)
+			{
+				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+			}
+		}
+		
+		foreach(var room in optionRoomList)
+		{
+			Console.WriteLine("-----");
+			Console.WriteLine($"RoomName : {room.RoomName}");
+			Console.WriteLine($"Start : {room.StartDate}");
+			Console.WriteLine($"End : {room.EndDate}");
+		}
+		
+		return optionRoomList;
+	}
+
+	private List<OptionRoom> Filter_ED(string endDate)
+	{
+		// 3. endDateonly
+		
+		DateTime start;
+		DateTime end;
+		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
+		if (parsedEndDate == DateOnly.FromDateTime(DateTime.Now))
+		{
+			return Filter();
+		} 
+		else
+		{
+			start = DateTime.Now;
+			end = new DateTime(parsedEndDate.Year, parsedEndDate.Month, parsedEndDate.Day, 0, 0, 0).AddDays(1);
+		}
+		List<OptionRoom> optionRoomList = new();
+		
+		Console.WriteLine($"initial start : {start}");
+		Console.WriteLine($"initial end : {end}");
+
+		foreach (var room in _db.Rooms)
+		{
+			Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+
+			int totalDays = (end.Day - start.Day)-1;
+			Console.WriteLine($"totalDays : {totalDays}");
+			
+			DateTime startInRoom;
+			DateTime endInRoom;
 			
 			for (int i = 0; i <= totalDays; i++)
 			{
 				DateTime currentDay = start.AddDays(i);
-				Console.WriteLine(currentDay.ToString());
+				Console.WriteLine($"currentDay : {currentDay}");
 				
-				var eventsOnTargetDate = eventList.Where(evt => 
-					evt.Start.DateTime.ToString().Split(' ')[0]
-					== 
-					currentDay.Date.ToString().Split(' ')[0]
-					).ToList();
-				
-				foreach (var singleEvent in eventsOnTargetDate)
+				if (currentDay.Date == start.Date)
 				{
-					// var eventStart = singleEvent.Start.DateTimeDateTimeOffset;
-					Console.WriteLine("I AM INSIDE");
+					startInRoom = start;
+					endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+					Console.WriteLine("currentDay.Date == start.Date");
+					Console.WriteLine($"startInRoom : {startInRoom}");
+					Console.WriteLine($"endInRoom : {endInRoom}");
+					Console.WriteLine("");
+				} 
+				else 
+				{
+					startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
+					endInRoom = startInRoom.AddDays(1);
+					Console.WriteLine("currentDay.Date != start.Date");
+					Console.WriteLine($"startInRoom : {startInRoom}");
+					Console.WriteLine($"endInRoom : {endInRoom}");
+					Console.WriteLine("");
 				}
-			} 
-			CalendarManager.ListingEvents(eventList);
+
+				List<Event> events = CalendarManager.MakeRequest(
+					_service,
+					calendar,
+					startInRoom,
+					endInRoom
+					).Items.ToList();
+
+				if (events.Count > 0)
+				{
+					DateTime? optionStart = startInRoom;
+					DateTime? optionEnd = new();
+					Event lastEvent = new();
+					foreach (var singleEvent in events)
+					{
+						DateTime? singleEventStart = singleEvent.Start.DateTime;
+						DateTime? singleEventEnd = singleEvent.End.DateTime;
+						if (startInRoom < singleEventStart)
+						{
+							optionEnd = singleEventStart;
+							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+							optionStart = singleEventEnd;
+						}
+						else
+						{
+							optionStart = singleEventEnd;
+						}
+						lastEvent = singleEvent;
+					}
+					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));
+				}
+
+				if (events.Count == 0)
+				{
+					optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				}
+
+			}
 		}
+
+		foreach (var room in optionRoomList)
+		{
+			Console.WriteLine("-----");
+			Console.WriteLine($"RoomName : {room.RoomName}");
+			Console.WriteLine($"Start : {room.StartDate}");
+			Console.WriteLine($"End : {room.EndDate}");
+		}
+		
+		return optionRoomList;
+	}
+
+	private List<OptionRoom> Filter_Complete(
+		string startDate, 
+		string endDate, 
+		string startTime, 
+		string endTime,
+		int capacity)
+	{
+		DateOnly.TryParse(startDate, out DateOnly parsedStartDate);
+		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
+		DateTime start = parsedStartDate.ToDateTime(parsedStartTime);
+		
+		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
+		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
+		DateTime end = parsedEndDate.ToDateTime(parsedEndTime);
+		
+		foreach (var room in FilterCapacity(capacity))
+		{
+			Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+			
+			int totalDays = (end.Day - start.Day)-1;
+			
+			DateTime startInRoom;
+			DateTime endInRoom;
+			
+			for (int i = 0; i <= totalDays; i++)
+			{
+				
+			}
+			
+		}
+		
+		throw new NotImplementedException();
+	}
+	
+	private List<Room> FilterCapacity(int minCap)
+	{
+		return _db.Rooms.Where(room => room.Capacity >= minCap).ToList();
 	}
 }
