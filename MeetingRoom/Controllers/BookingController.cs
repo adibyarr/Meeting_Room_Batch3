@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration.UserSecrets;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
+using System.Globalization;
 
 namespace MeetingRoom.Controllers;
 
@@ -32,20 +33,23 @@ public class BookingController : Controller
 
 	[HttpPost]
 	[Route("Booking/AvailableRooms")]
+	[Obsolete]
 	public IActionResult AvailableRooms(long? userId, string startDate, string endDate, string startTime, string endTime, int capacity)
 	{
-		DateOnly.TryParse(startDate, out DateOnly parsedStartDate);
-		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
-		Console.WriteLine(parsedStartDate);
-		Console.WriteLine(parsedEndDate);
+		Console.WriteLine($"Input Start Date: {startDate} {startTime}");
+		Console.WriteLine($"Input End Date: {endDate} {endTime}");
 
-		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
-		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
-		Console.WriteLine(parsedStartTime);
-		Console.WriteLine(parsedEndTime);
+		DateOnly.TryParse(startDate, CultureInfo.InvariantCulture, out DateOnly parsedStartDate);
+		TimeOnly.TryParse(startTime, CultureInfo.InvariantCulture, out TimeOnly parsedStartTime);
 
-		Console.WriteLine($"parsed DateTime start : {parsedStartDate.ToDateTime(parsedStartTime)}");
-		Console.WriteLine($"parsed DateTime end : {parsedEndDate.ToDateTime(parsedEndTime)}");
+		DateOnly.TryParse(endDate, CultureInfo.InvariantCulture, out DateOnly parsedEndDate);
+		TimeOnly.TryParse(endTime, CultureInfo.InvariantCulture, out TimeOnly parsedEndTime);
+
+		DateTime.TryParse($"{parsedStartDate} {parsedStartTime}", out DateTime start);
+		DateTime.TryParse($"{parsedEndDate} {parsedEndTime}", out DateTime end);
+
+		Console.WriteLine($"parsed DateTime start : {start}");
+		Console.WriteLine($"parsed DateTime end : {end}");
 		Console.WriteLine($"DateTime now : {DateTime.Now}");
 
 		List<Room> roomsCap = FilterCapacity(capacity);
@@ -54,7 +58,7 @@ public class BookingController : Controller
 			Console.WriteLine($"{room.RoomName} : {room.Capacity}");
 		}
 
-		FilterDate(roomsCap, startDate, endDate, startTime, endTime);
+		FilterDate(roomsCap, start, end);
 
 		userId = (int?)TempData.Peek("UserID");
 
@@ -80,53 +84,90 @@ public class BookingController : Controller
 	[Obsolete]
 	private void FilterDate(
 		List<Room> rooms,
-		string startDate,
-		string endDate,
-		string startTime,
-		string endTime)
+		DateTime startDate,
+		DateTime endDate)
 	{
-		DateOnly.TryParse(startDate, out DateOnly parsedStartDate);
-		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
-		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
-		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
-
-		// ServiceAccountCredential credential = ServiceAccount.GenerateCredential();
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 
-		DateTime start = parsedStartDate.ToDateTime(parsedStartTime);
-		DateTime end = parsedEndDate.ToDateTime(parsedEndTime);
-		// DateOnly initialDate = DateOnly.FromDateTime(DateTime.Now);
-		// TimeOnly initialTime = new TimeOnly(00, 00, 00);
-		// DateTime initial = initialDate.ToDateTime(initialTime);
-
-		TimeSpan timeBenchmark = new DateTime(end.Year, end.Month, end.Day, 24, 00, 00) - new DateTime(end.Year, end.Month, end.Day, 00, 00, 00);
+		TimeSpan timeDiff = TimeOnly.FromDateTime(endDate) - TimeOnly.FromDateTime(startDate);
+		List<OptionRoom> optionRoomList = new List<OptionRoom>();
 
 		foreach (var room in rooms)
 		{
-			Calendar calendar = CalendarManager.GenerateCalendar(service, room.Link);
-
-			Events events = CalendarManager.MakeRequest(
-				service,
-				calendar,
-				start,
-				end
-			);
-
-			// this list contains all events ranging from datetime Start - datetime End
-			// not just events that only occurs in particular time in some days.
-			// conclusion : still need some filtering process
-			List<Event> eventList = CalendarManager.GetEventList(events);
-			foreach (var anEvent in eventList)
+			if (room.Link != null)
 			{
-				start.AddMinutes(-30);
-				if (anEvent.End.DateTime == start)
-				{
+				Google.Apis.Calendar.v3.Data.Calendar calendar = CalendarManager.GenerateCalendar(service, room.Link);
 
+				Events events = CalendarManager.MakeRequest(
+					service,
+					calendar,
+					startDate,
+					endDate
+				);
+
+				// this list contains all events ranging from datetime Start - datetime End
+				// not just events that only occurs in particular time in some days.
+				// conclusion : still need some filtering process
+				List<Event> eventList = CalendarManager.GetEventList(events);
+				TimeOnly startTimeOnly = TimeOnly.FromDateTime(startDate);
+				TimeOnly endTimeOnly = TimeOnly.FromDateTime(endDate);
+
+				TimeOnly startEventTime = new TimeOnly();
+				TimeOnly endEventTime = new TimeOnly();
+
+				Console.WriteLine(startTimeOnly);
+				Console.WriteLine(endTimeOnly);
+
+				foreach (var anEvent in eventList)
+				{
+					if (anEvent.Start.DateTime != null && anEvent.End.DateTime != null)
+					{
+						DateOnly eventDateStart = DateOnly.FromDateTime((DateTime)anEvent.Start.DateTime);
+						TimeOnly eventTimeStart = TimeOnly.FromDateTime((DateTime)anEvent.Start.DateTime);
+
+						DateOnly eventDateEnd = DateOnly.FromDateTime((DateTime)anEvent.End.DateTime);
+						TimeOnly eventTimeEnd = TimeOnly.FromDateTime((DateTime)anEvent.End.DateTime);
+
+						endEventTime = eventTimeStart;
+
+						TimeSpan eventDiff = new TimeSpan();
+						TimeOnly startOfEvent = eventTimeStart;
+						// Perulangan till there's an event before or 00:00
+						Console.WriteLine($"Start of the Event: {eventTimeStart}");
+						while (eventTimeEnd != startOfEvent || startOfEvent == new TimeOnly(00, 00, 00))
+						{
+							var decremental = new TimeSpan(00, -30, 00);
+							eventDiff += decremental;
+							startOfEvent.Add(decremental);
+							Console.WriteLine($"Start of the Event on Loop: {startOfEvent}");
+
+							var eventTime = eventList.FirstOrDefault(e => e.End.DateTime == eventDateStart.ToDateTime(startOfEvent));
+
+							if (eventTime != null)
+							{
+								break;
+							}
+						}
+						Console.WriteLine($"Start of the Event: {startOfEvent}");
+						if (startOfEvent != eventTimeStart)
+						{
+							startEventTime = eventTimeStart.AddHours(eventDiff.Hours).AddMinutes(eventDiff.Minutes);
+							DateTime eventStart = eventDateStart.ToDateTime(startEventTime);
+							DateTime eventEnd = eventDateEnd.ToDateTime(endEventTime);
+							optionRoomList.Add(new OptionRoom(room.RoomName, eventStart, eventEnd));
+						}
+
+					}
 				}
+
+				// CalendarManager.ListingEvents(eventList);
 			}
 
-			CalendarManager.ListingEvents(eventList);
+			foreach (var optRoom in optionRoomList)
+			{
+				Console.WriteLine($"{optRoom.RoomName}, {optRoom.StartDate} - {optRoom.EndDate}");
+			}
 		}
 	}
 }
