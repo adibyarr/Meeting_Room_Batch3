@@ -78,7 +78,36 @@
             </div>
         </form>
     </div>
-</div>
+
+    <div>
+        <table class="table table-hover" style="margin-top: 20px;">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+            </colgroup>
+            <thead>
+                <tr style="background-color: rgba(230, 230, 230, 0.659);">
+                    <th scope="col">
+                        Room Name
+                    </th>
+                    <th scope="col">
+                        Capacity
+                    </th>
+                    <th scope="col">
+                        Date
+                    </th>
+                    <th scope="col">
+                        Time
+                    </th>
+                    <th scope="col">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+    </div>
 </div>
 
 <script>
@@ -149,8 +178,9 @@
 
     var initTime;
     $("body").on("click", function () {
-        initTime = $("#timepicker").val();
-        $('#timepicker2').timepicker('option', 'minTime', initTime);
+        initTime = $("#timepicker").val() || "something";
+        if (initTime != "something")
+            $('#timepicker2').timepicker('option', 'minTime', initTime);
         console.log(initTime);
     });
 </script>
