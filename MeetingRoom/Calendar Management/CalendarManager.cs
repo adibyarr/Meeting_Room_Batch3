@@ -17,7 +17,7 @@ public static class CalendarManager
 		return service;
 	}
 	
-	public static Calendar GenerateCalendar(CalendarService service, string calId) // calendar's Id 
+	public static Calendar GenerateCalendar(CalendarService service, string? calId) // calendar's Id 
 	{
 		var calendar = service.Calendars.Get(calId).Execute();
 		return calendar;
