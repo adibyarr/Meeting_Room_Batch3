@@ -27,7 +27,7 @@ public class BookingController : Controller
 		{
 			return RedirectToAction("Index", "Login");
 		}
-		
+
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
@@ -40,6 +40,12 @@ public class BookingController : Controller
 	[Obsolete]
 	public IActionResult AvailableRooms(long? userId, string startDate, string endDate, string startTime, string endTime, int capacity)
 	{
+		userId = HttpContext.Session.GetInt32("UserID");
+		if (userId == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+
 		Console.WriteLine($"Input Start Date: {startDate} {startTime}");
 		Console.WriteLine($"Input End Date: {endDate} {endTime}");
 
@@ -63,8 +69,6 @@ public class BookingController : Controller
 		}
 
 		FilterDate_NAR(roomsCap, startDate, endDate, startTime, endTime);
-
-		userId = (int?)TempData.Peek("UserID");
 
 		using (_db)
 		{
@@ -124,6 +128,7 @@ public class BookingController : Controller
 
 				// Helper variable, as first event End DateTime
 				DateTime eventEnd = DateOnly.FromDateTime(startInput).ToDateTime(new TimeOnly(00, 00, 00));
+				Console.WriteLine($"Event end: {eventEnd}");
 
 				foreach (var anEvent in eventList)
 				{
@@ -132,33 +137,42 @@ public class BookingController : Controller
 						DateTime eventStart = (DateTime)anEvent.Start.DateTime;
 						DateOnly eventDateStart = DateOnly.FromDateTime(eventStart);
 
+						DateTime eventEnded = eventStart;
+
 						// Helper variable, for new Time Addition
 						// TimeSpan eventDiff = new TimeSpan();
 						// Looping till there's an event before or 00:00
 						Console.WriteLine($"Start of the Event: {eventStart}");
-						DateTime eventStartStunt = eventStart;
+						// DateTime eventStartStunt = eventStart;
+						// TimeSpan decremental = new TimeSpan();
 						// Event eventTime;
-						do
-						{
-							// var decremental = new TimeSpan(00, -30, 00);
-							// eventDiff += decremental;
-							eventStartStunt.AddMinutes(-30);
-							Console.WriteLine($"Start of the Event on Loop: {eventStartStunt}");
+						var theStart = eventDateStart.ToDateTime(new TimeOnly(00, 00, 00));
+						Console.WriteLine($"theStart: {theStart}");
+						// do
+						// {
+						// decremental += new TimeSpan(00, -30, 00);
+						// eventDiff += decremental;
+						// eventTime = eventList.FirstOrDefault(e => e.End.DateTime == eventStartStunt);
+						// } 
+						// while (eventStart != eventEnd || !eventStart.Equals(theStart))
+						// {
+						// 	eventStart = eventStart.AddMinutes(-30);
+						// 	Console.WriteLine($"theStart on Loop: {theStart}");
+						// 	Console.WriteLine($"Start of the Event on Loop: {eventStart}");
 
-							// eventTime = eventList.FirstOrDefault(e => e.End.DateTime == eventStartStunt);
-						} while (eventStartStunt != eventEnd || (eventStartStunt.Hour == 0 && eventStartStunt.Minute == 0));
+						// }
 						eventEnd = (DateTime)anEvent.End.DateTime;
-						optionRoomList.Add(new OptionRoom(room.RoomName, eventStartStunt, eventStart));
+						optionRoomList.Add(new OptionRoom(room.RoomName, eventStart, eventEnded));
 					}
 				}
 
 				// CalendarManager.ListingEvents(eventList);
 			}
 
-			foreach (var optRoom in optionRoomList)
-			{
-				Console.WriteLine($"{optRoom.RoomName}, {optRoom.StartDate} - {optRoom.EndDate}");
-			}
+			// foreach (var optRoom in optionRoomList)
+			// {
+			// 	Console.WriteLine($"{optRoom.RoomName}, {optRoom.StartDate} - {optRoom.EndDate}");
+			// }
 		}
 	}
 }

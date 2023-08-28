@@ -149,8 +149,9 @@
 
     var initTime;
     $("body").on("click", function () {
-        initTime = $("#timepicker").val();
-        $('#timepicker2').timepicker('option', 'minTime', initTime);
+        initTime = $("#timepicker").val() || "something";
+        if (initTime != "something")
+            $('#timepicker2').timepicker('option', 'minTime', initTime);
         console.log(initTime);
     });
 </script>
