@@ -62,7 +62,7 @@ public static class CalendarManager
 				Console.WriteLine($"Event Description 	: {singleEvent.Description}");
 				Console.WriteLine($"Event Start/TimeZone: {singleEvent.Start.DateTime.ToString()}, {singleEvent.Start.TimeZone}");
 				Console.WriteLine($"Event End/Timezone	: {singleEvent.End.DateTime.ToString()}, {singleEvent.End.TimeZone}");
-				Console.WriteLine($"Event Attendees		: {singleEvent.Attendees}");
+				Console.WriteLine($"Event Attendees		: {singleEvent.Attendees}");		
 			}
 		}
 		else
