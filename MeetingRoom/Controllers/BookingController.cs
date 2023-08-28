@@ -53,7 +53,7 @@ public class BookingController : Controller
 	[Route("Booking/Book")]
 	public IActionResult Book()
 	{
-		// booking logic
+		// booking 
 		return View("Booking");
 	}
 	
