@@ -22,8 +22,12 @@ public class BookingController : Controller
 
 	public IActionResult Index(long? userId)
 	{
-		// userId = Convert.ToInt32(TempData["UserID"]);
-		userId = (int?)TempData.Peek("UserID");
+		userId = HttpContext.Session.GetInt32("UserID");
+		if (userId == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+		
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
@@ -39,18 +43,18 @@ public class BookingController : Controller
 		Console.WriteLine($"Input Start Date: {startDate} {startTime}");
 		Console.WriteLine($"Input End Date: {endDate} {endTime}");
 
-		DateOnly.TryParse(startDate, CultureInfo.InvariantCulture, out DateOnly parsedStartDate);
-		TimeOnly.TryParse(startTime, CultureInfo.InvariantCulture, out TimeOnly parsedStartTime);
+		// DateOnly.TryParse(startDate, CultureInfo.InvariantCulture, out DateOnly parsedStartDate);
+		// TimeOnly.TryParse(startTime, CultureInfo.InvariantCulture, out TimeOnly parsedStartTime);
 
-		DateOnly.TryParse(endDate, CultureInfo.InvariantCulture, out DateOnly parsedEndDate);
-		TimeOnly.TryParse(endTime, CultureInfo.InvariantCulture, out TimeOnly parsedEndTime);
+		// DateOnly.TryParse(endDate, CultureInfo.InvariantCulture, out DateOnly parsedEndDate);
+		// TimeOnly.TryParse(endTime, CultureInfo.InvariantCulture, out TimeOnly parsedEndTime);
 
-		DateTime.TryParse($"{parsedStartDate} {parsedStartTime}", out DateTime start);
-		DateTime.TryParse($"{parsedEndDate} {parsedEndTime}", out DateTime end);
+		// DateTime.TryParse($"{parsedStartDate} {parsedStartTime}", out DateTime start);
+		// DateTime.TryParse($"{parsedEndDate} {parsedEndTime}", out DateTime end);
 
-		Console.WriteLine($"parsed DateTime start : {start}");
-		Console.WriteLine($"parsed DateTime end : {end}");
-		Console.WriteLine($"DateTime now : {DateTime.Now}");
+		// Console.WriteLine($"parsed DateTime start : {start}");
+		// Console.WriteLine($"parsed DateTime end : {end}");
+		// Console.WriteLine($"DateTime now : {DateTime.Now}");
 
 		List<Room> roomsCap = FilterCapacity(capacity);
 		foreach (var room in roomsCap)
@@ -58,7 +62,7 @@ public class BookingController : Controller
 			Console.WriteLine($"{room.RoomName} : {room.Capacity}");
 		}
 
-		FilterDate(roomsCap, start, end);
+		FilterDate_NAR(roomsCap, startDate, endDate, startTime, endTime);
 
 		userId = (int?)TempData.Peek("UserID");
 
@@ -82,15 +86,22 @@ public class BookingController : Controller
 	}
 
 	[Obsolete]
-	private void FilterDate(
+	private void FilterDate_NAR(
 		List<Room> rooms,
-		DateTime startDate,
-		DateTime endDate)
+		string startDate,
+		string endDate,
+		string startTime,
+		string endTime)
 	{
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 
-		TimeSpan timeDiff = TimeOnly.FromDateTime(endDate) - TimeOnly.FromDateTime(startDate);
+		DateTime.TryParse($"{startDate} {startTime}", CultureInfo.InvariantCulture, out DateTime startInput);
+		DateTime.TryParse($"{endDate} {endTime}", CultureInfo.InvariantCulture, out DateTime endInput);
+		System.Console.WriteLine("Start Input : " + startInput);
+		System.Console.WriteLine("End Input : " + endInput);
+
+		TimeSpan timeDiff = TimeOnly.FromDateTime(endInput) - TimeOnly.FromDateTime(startInput);
 		List<OptionRoom> optionRoomList = new List<OptionRoom>();
 
 		foreach (var room in rooms)
@@ -102,62 +113,42 @@ public class BookingController : Controller
 				Events events = CalendarManager.MakeRequest(
 					service,
 					calendar,
-					startDate,
-					endDate
+					startInput,
+					endInput
 				);
 
 				// this list contains all events ranging from datetime Start - datetime End
 				// not just events that only occurs in particular time in some days.
 				// conclusion : still need some filtering process
 				List<Event> eventList = CalendarManager.GetEventList(events);
-				TimeOnly startTimeOnly = TimeOnly.FromDateTime(startDate);
-				TimeOnly endTimeOnly = TimeOnly.FromDateTime(endDate);
 
-				TimeOnly startEventTime = new TimeOnly();
-				TimeOnly endEventTime = new TimeOnly();
-
-				Console.WriteLine(startTimeOnly);
-				Console.WriteLine(endTimeOnly);
+				// Helper variable, as first event End DateTime
+				DateTime eventEnd = DateOnly.FromDateTime(startInput).ToDateTime(new TimeOnly(00, 00, 00));
 
 				foreach (var anEvent in eventList)
 				{
 					if (anEvent.Start.DateTime != null && anEvent.End.DateTime != null)
 					{
-						DateOnly eventDateStart = DateOnly.FromDateTime((DateTime)anEvent.Start.DateTime);
-						TimeOnly eventTimeStart = TimeOnly.FromDateTime((DateTime)anEvent.Start.DateTime);
+						DateTime eventStart = (DateTime)anEvent.Start.DateTime;
+						DateOnly eventDateStart = DateOnly.FromDateTime(eventStart);
 
-						DateOnly eventDateEnd = DateOnly.FromDateTime((DateTime)anEvent.End.DateTime);
-						TimeOnly eventTimeEnd = TimeOnly.FromDateTime((DateTime)anEvent.End.DateTime);
-
-						endEventTime = eventTimeStart;
-
-						TimeSpan eventDiff = new TimeSpan();
-						TimeOnly startOfEvent = eventTimeStart;
-						// Perulangan till there's an event before or 00:00
-						Console.WriteLine($"Start of the Event: {eventTimeStart}");
-						while (eventTimeEnd != startOfEvent || startOfEvent == new TimeOnly(00, 00, 00))
+						// Helper variable, for new Time Addition
+						// TimeSpan eventDiff = new TimeSpan();
+						// Looping till there's an event before or 00:00
+						Console.WriteLine($"Start of the Event: {eventStart}");
+						DateTime eventStartStunt = eventStart;
+						// Event eventTime;
+						do
 						{
-							var decremental = new TimeSpan(00, -30, 00);
-							eventDiff += decremental;
-							startOfEvent.Add(decremental);
-							Console.WriteLine($"Start of the Event on Loop: {startOfEvent}");
+							// var decremental = new TimeSpan(00, -30, 00);
+							// eventDiff += decremental;
+							eventStartStunt.AddMinutes(-30);
+							Console.WriteLine($"Start of the Event on Loop: {eventStartStunt}");
 
-							var eventTime = eventList.FirstOrDefault(e => e.End.DateTime == eventDateStart.ToDateTime(startOfEvent));
-
-							if (eventTime != null)
-							{
-								break;
-							}
-						}
-						Console.WriteLine($"Start of the Event: {startOfEvent}");
-						if (startOfEvent != eventTimeStart)
-						{
-							startEventTime = eventTimeStart.AddHours(eventDiff.Hours).AddMinutes(eventDiff.Minutes);
-							DateTime eventStart = eventDateStart.ToDateTime(startEventTime);
-							DateTime eventEnd = eventDateEnd.ToDateTime(endEventTime);
-							optionRoomList.Add(new OptionRoom(room.RoomName, eventStart, eventEnd));
-						}
-
+							// eventTime = eventList.FirstOrDefault(e => e.End.DateTime == eventStartStunt);
+						} while (eventStartStunt != eventEnd || (eventStartStunt.Hour == 0 && eventStartStunt.Minute == 0));
+						eventEnd = (DateTime)anEvent.End.DateTime;
+						optionRoomList.Add(new OptionRoom(room.RoomName, eventStartStunt, eventStart));
 					}
 				}
 
