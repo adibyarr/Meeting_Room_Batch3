@@ -88,8 +88,9 @@ public class BookingController : Controller
 		DateOnly.TryParse(endDate, out DateOnly parsedEndDate);
 		TimeOnly.TryParse(startTime, out TimeOnly parsedStartTime);
 		TimeOnly.TryParse(endTime, out TimeOnly parsedEndTime);
+		DateTime start = parsedStartDate.ToDateTime(parsedStartTime);
+		DateTime end = parsedEndDate.ToDateTime(parsedEndTime);
 		
-		// ServiceAccountCredential credential = ServiceAccount.GenerateCredential();
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		
@@ -100,15 +101,31 @@ public class BookingController : Controller
 			Events events = CalendarManager.MakeRequest(
 				service,
 				calendar,
-				parsedStartDate.ToDateTime(parsedStartTime),
-				parsedEndDate.ToDateTime(parsedEndTime)
+				start,
+				end
 			);
 			
-			// this list contains all events ranging from datetime Start - datetime End
-			// not just events that only occurs in particular time in some days.
-			// conclusion : still need some filtering process
 			List<Event> eventList = events.Items.ToList();
 			
+			int totalDays = (end - start).Days;
+			
+			for (int i = 0; i <= totalDays; i++)
+			{
+				DateTime currentDay = start.AddDays(i);
+				Console.WriteLine(currentDay.ToString());
+				
+				var eventsOnTargetDate = eventList.Where(evt => 
+					evt.Start.DateTime.ToString().Split(' ')[0]
+					== 
+					currentDay.Date.ToString().Split(' ')[0]
+					).ToList();
+				
+				foreach (var singleEvent in eventsOnTargetDate)
+				{
+					// var eventStart = singleEvent.Start.DateTimeDateTimeOffset;
+					Console.WriteLine("I AM INSIDE");
+				}
+			} 
 			CalendarManager.ListingEvents(eventList);
 		}
 	}
