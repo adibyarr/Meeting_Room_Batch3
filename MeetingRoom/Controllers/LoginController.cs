@@ -34,7 +34,7 @@ namespace MeetingRoom.Controllers
 
                     if (user != null)
                     {
-                        TempData["UserID"] = Convert.ToInt32(user.UserId);
+                        HttpContext.Session.SetInt32("UserID", Convert.ToInt32(user.UserId));
                         return RedirectToAction("SaveLoginData", user.UserId);
                     }
                 }
@@ -45,7 +45,7 @@ namespace MeetingRoom.Controllers
 
         public IActionResult SaveLoginData(int? userId)
         {
-            userId = (int?)TempData["UserID"];
+            userId = HttpContext.Session.GetInt32("UserID");
             if (userId == null)
             {
                 return RedirectToAction("Index", "Login");

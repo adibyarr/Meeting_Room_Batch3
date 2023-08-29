@@ -30,17 +30,22 @@ public class BookingController : Controller
 
 	public IActionResult Index(long? userId)
 	{
-		// userId = Convert.ToInt32(TempData["UserID"]);
-		userId = (int?)TempData.Peek("UserID");
+		userId = HttpContext.Session.GetInt32("UserID");
+		if (userId == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
 			return View("Booking", user);
 		}
 	}
-	
+
 	[HttpPost]
 	[Route("Booking/AvailableRooms")]
+	[Obsolete]
 	public IActionResult AvailableRooms(long? userId, string startDate, string endDate, string startTime, string endTime, int capacity)
 	{
 		UserCredential credential = GoogleOAuth.GenerateCredential();
@@ -135,7 +140,7 @@ public class BookingController : Controller
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-			return View("AvailableRooms",user);
+			return View("AvailableRooms", user);
 		}
 	}
 

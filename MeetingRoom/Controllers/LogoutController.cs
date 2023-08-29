@@ -10,8 +10,7 @@ namespace MeetingRoom.Controllers
     {
         public IActionResult Index()
         {
-            HttpContext.Session.Clear();
-            TempData.Remove("UserID");
+            HttpContext.Session.Remove("UserID");
             return RedirectToAction("Index", "Login");
         }
     }
