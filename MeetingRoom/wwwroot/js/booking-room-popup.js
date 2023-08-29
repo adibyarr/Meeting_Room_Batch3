@@ -5,7 +5,8 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
 
     $(".modal-body").html(
         `
-        <form method="post" id="createMeetingForm" action="Booking/InsertEvent">
+        <form method="post" id="createMeetingForm" action="Booking/InsertMeeting">
+        @Html.AntiForgeryToken()
             <h5>Meeting Detail</h5>
             <hr class="full-width-hr">
                 <table class="table table-borderless">
@@ -28,7 +29,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column desc">Attendee</td>
                         <td>:</td>
                         <td>
-                            <textarea type="text" name="attendees" class="second-column form-control"/>
+                            <textarea type="text" name="attendees" class="second-column form-control" placeholder="attendee1@example.com, attendee2@example.com"/>
                             </textarea>
                         </td>
                     </tr>
@@ -72,7 +73,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column">Room Capacity</td>
                         <td class="mediator-column">:</td>
                         <td>
-                            <input type="text" name="roomName" class="second-column form-control" value="${capacity}" disabled/>
+                            <input type="text" name="roomCap" class="second-column form-control" value="${capacity}" disabled/>
                         </td>
                     </tr>              
                 </table>
