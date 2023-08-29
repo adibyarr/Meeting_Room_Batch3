@@ -7,7 +7,43 @@
         Layout = "~/Views/Shared/_AdminLayout.cshtml";
     }
 }
+<style>
+    .booking-first-column {
+        width: 20%;
+        text-align: left;
+        vertical-align: middle;
+    }
 
+    .first-column {
+        width: 35%;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .mediator-column {
+        width: 5%;
+        vertical-align: middle;
+    }
+
+    .column {
+        vertical-align: middle;
+    }
+
+    .second-column {
+        vertical-align: middle;
+    }
+
+    .desc {
+        vertical-align: top;
+    }
+
+    .full-width-hr {
+        margin: 5px;
+        border: none;
+        border-top: 2px solid #878181;
+        width: 100%;
+    }
+</style>
 <div class="text-center">
     <h1 class="display-4">Booking</h1>
     <div class="container rounded bg-white mt-5"></div>
@@ -16,53 +52,56 @@
             <input type="hidden" name="userId" value="@Model.UserId" />
             <table class="table table-borderless">
                 <tr>
-                    <td>
-                        <p>Date : </p>
+                    <td class="booking-first-column">
+                        Date
                     </td>
+                    <td class="mediator-column">:</td>
                     <td>
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
                                     <input type="text" class="form-control" name="startDate" id="datepicker"
-                                        placeholder="MM/DD/YYYY" autocomplete="off" />
+                                        placeholder="mm/dd/yyyy" autocomplete="off" />
                                 </div>
                                 <div class="col-sm">
                                     <input type="text" class="form-control" name="endDate" id="datepicker2"
-                                        placeholder="MM/DD/YYYY" autocomplete="off" />
+                                        placeholder="mm/dd/yyyy" autocomplete="off" />
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p>Time : </p>
+                    <td class="booking-first-column">
+                        Time
                     </td>
+                    <td class="mediator-column">:</td>
                     <td>
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" name="startTime"
-                                        placeholder="HH:MM AM/PM" id="timepicker" autocomplete="off" />
+                                    <input type="text" class="form-control" name="startTime" placeholder="hh:mm AM/PM"
+                                        id="timepicker" autocomplete="off" />
                                 </div>
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" name="endTime"
-                                        placeholder="HH:MM AM/PM" id="timepicker2" autocomplete="off" />
+                                    <input type="text" class="form-control" name="endTime" placeholder="hh:mm AM/PM"
+                                        id="timepicker2" autocomplete="off" />
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <p>Capacity : </p>
+                    <td class="booking-first-column">
+                        Capacity
                     </td>
+                    <td class="mediator-column">:</td>
                     <td>
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="number" class="form-control" name="capacity" min="1"
-                                        id="capacity" placeholder="Required Room Capacity" />
+                                    <input type="number" class="form-control" name="capacity" min="1" id="capacity"
+                                        placeholder="Room Capacity" />
                                 </div>
                             </div>
                         </div>
@@ -82,11 +121,11 @@
     <div>
         <table class="table table-hover" style="margin-top: 20px;">
             <colgroup>
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
-                <col style="width: 20%;">
+                <col style="width: 25%;">
+                <col style="width: 10%;">
+                <col style="width: 25%;">
+                <col style="width: 25%;">
+                <col style="width: 15%;">
             </colgroup>
             <thead>
                 <tr style="background-color: rgba(230, 230, 230, 0.659);">
@@ -107,6 +146,43 @@
                     </th>
                 </tr>
             </thead>
+
+            <tbody>
+                <tr>
+                    <td scope="col" class="column">
+                        Andong
+                    </td>
+                    <td scope="col" class="column">
+                        5
+                    </td>
+                    <td scope="col" class="column">
+                        30/08/2023
+                    </td>
+                    <td scope="col" class="column">
+                        09.00 - 11.00
+                    </td>
+                    <td scope="col" class="column">
+                        <button class="btn btn-success"
+                            onclick="popupChooseRoom('Andong', '5', '30/08/2023', '30/08/2023', '09.00', '11.00')">
+                            Choose
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+    </div>
+
+    @* Pop Up Window *@
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="justify-content: center;">
+                    <h5 class="modal-title">Ini Title</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Ini body</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -126,14 +202,14 @@
     });
 
     $('#timepicker').timepicker({
-        timeFormat: 'hh:mm p',
+        timeFormat: 'h:i A',
         dynamic: false,
         dropdown: true,
         scrollbar: true,
     });
 
     $('#timepicker2').timepicker({
-        timeFormat: 'hh:mm p',
+        timeFormat: 'h:i A',
         dynamic: false,
         dropdown: true,
         scrollbar: true,
@@ -177,10 +253,11 @@
     });
 
     var initTime;
-    $("body").on("click", function () {
+    $('#timepicker').on("change", function () {
         initTime = $("#timepicker").val() || "something";
         if (initTime != "something")
             $('#timepicker2').timepicker('option', 'minTime', initTime);
         console.log(initTime);
     });
 </script>
+<script src="~/js/booking-room-popup.js"></script>
