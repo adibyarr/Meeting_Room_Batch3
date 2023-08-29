@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Google.Apis" Version="1.61.0" />
     <PackageReference Include="Google.Apis.Calendar.v3" Version="1.61.0.3137" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
