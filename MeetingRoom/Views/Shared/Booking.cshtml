@@ -2,9 +2,9 @@
 
 @{
     ViewBag.Title = "Booking";
-    if (ViewData["Role"] != null)
+    if (Context.Session.GetString("Role") != null)
     {
-        if (ViewData["Role"].Equals("Admin"))
+        if (Context.Session.GetString("Role").Equals("Admin"))
         {
             Layout = "~/Views/Shared/_AdminLayout.cshtml";
         }

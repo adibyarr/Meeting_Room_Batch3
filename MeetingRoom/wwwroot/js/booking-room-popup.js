@@ -1,12 +1,18 @@
 function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endTime) {
-    console.log("End Date: " + endDate);
+    // console.log("End Date: " + endDate);
+    if (startTime === "0:00") {
+        startTime = "00:00";
+    }
+
+    if (endTime === "0:00") {
+        endTime = "00:00";
+    }
 
     $(".modal-title").html("Meeting Room Reservation");
 
     $(".modal-body").html(
         `
-        <form method="post" id="createMeetingForm" action="Booking/InsertMeeting">
-        @Html.AntiForgeryToken()
+        <form method="post" id="createMeetingForm" action="InsertMeeting">
             <h5>Meeting Detail</h5>
             <hr class="full-width-hr">
                 <table class="table table-borderless">
@@ -21,7 +27,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column desc">Description</td>
                         <td>:</td>
                         <td>
-                            <textarea type="text" name="description" class="second-column form-control"/>
+                            <textarea type="text" name="description" class="second-column form-control" id="desc"/>
                             </textarea>
                         </td>
                     </tr>
@@ -29,7 +35,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column desc">Attendee</td>
                         <td>:</td>
                         <td>
-                            <textarea type="text" name="attendees" class="second-column form-control" placeholder="attendee1@example.com, attendee2@example.com"/>
+                            <textarea type="text" name="attendee" class="second-column form-control" id="attendee" placeholder="attendee1@example.com,attendee2@example.com"/>
                             </textarea>
                         </td>
                     </tr>
@@ -37,7 +43,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column">Date</td>
                         <td class="mediator-column">:</td>
                         <td>
-                            <input type="text" name="startDate" class="second-column form-control" value="${startDate}" disabled/>
+                            <input readonly type="text" name="startDate" class="second-column form-control" value="${startDate}"/>
                         </td>
                         <td>
                             <input type="text" name="endDate" class="second-column form-control" value="${endDate}" hidden/>
@@ -66,14 +72,14 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         <td class="first-column">Room Name</td>
                         <td class="mediator-column">:</td>
                         <td>
-                            <input type="text" name="roomName" class="second-column form-control" value="${roomName}" disabled/>
+                            <input readonly type="text" name="roomName" class="second-column form-control" value="${roomName}"/>
                         </td>
                     </tr>
                     <tr>
                         <td class="first-column">Room Capacity</td>
                         <td class="mediator-column">:</td>
                         <td>
-                            <input type="text" name="roomCap" class="second-column form-control" value="${capacity}" disabled/>
+                            <input readonly type="text" name="roomCap" class="second-column form-control" value="${capacity}"/>
                         </td>
                     </tr>              
                 </table>
@@ -101,6 +107,9 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
 
     var availEnd = new Date("January 13 2000 " + endTime);
     console.log("Avail End: " + availEnd);
+    if (endTime === "00:00") {
+        endTime = "24:00";
+    }
 
     $('#modalStartTimepicker').timepicker({
         timeFormat: 'H:i',
@@ -139,22 +148,24 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
     });
 
     $('#submit-meeting').on('click', function (event) {
-        // console.log("Start Time: " + startTime);
-        // console.log("Start Time Input: " + startTimeInput);
-        // console.log(startTimeInput < startTime);
-        // console.log("End Time Input: " + endTimeInput);
-        // console.log("Midnight Hour: " + midnightHour);
-        // console.log("End Time Hour: " + availEnd.getHours());
-        // console.log(availEnd.getHours() == midnightHour);
+        console.log("Start Time: " + startTime);
+        console.log("Start Time Input: " + startTimeInput);
+        console.log(startTimeInput < startTime);
+        console.log(startTimeInput > endTime);
+        console.log("End Time Input: " + endTimeInput);
+        console.log("End Time Hour: " + availEnd.getHours());
+        console.log("Meeting Desc: " + $('#desc').val());
+        console.log("Meeting Attendees: " + $('#attendee').val());
         // event.preventDefault();
 
-        if (startTimeInput < startTime || (startTimeInput > endTime && availEnd.getHours() != 0)) {
+        if (startTimeInput < startTime || startTimeInput > endTime) {
             alert("Invalid time! Please input start time within the range");
             event.preventDefault();
-        } else if ((endTimeInput !== "00:00" && endTimeInput < startTime) || (endTimeInput > endTime && availEnd.getHours() != 0)) {
+        } else if ((endTimeInput !== "00:00" && endTimeInput < startTime) || endTimeInput > endTime) {
             alert("Invalid time! Please input end time within the range");
             event.preventDefault();
         }
+        alert("Meeting Room Reserved Successfully");
     });
 
     $(".modal").modal("show");

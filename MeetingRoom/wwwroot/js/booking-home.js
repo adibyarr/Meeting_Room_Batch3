@@ -4,7 +4,7 @@ $("#datepicker").datepicker({
     selectOtherMonths: true
 });
 
-var startDate = $("#datepicker").datepicker('getDate');
+var startDate = new Date();
 
 $("#datepicker2").datepicker({
     minDate: 0,

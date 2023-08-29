@@ -942,7 +942,7 @@ public class BookingController : Controller
 		Console.WriteLine($"end : {end}");
 		Console.WriteLine($"capacity : {capacity}");
 
-        Google.Apis.Calendar.v3.Data.Calendar calendar;
+		Google.Apis.Calendar.v3.Data.Calendar calendar;
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 
 		// main logic
@@ -1101,5 +1101,85 @@ public class BookingController : Controller
 		}
 
 		return optionRoomList;
+	}
+
+	[HttpPost]
+	[Obsolete]
+	public IActionResult InsertMeeting(string summary, string description, string attendee,
+									   string startDate, string endDate,
+									   string meetingStartTime, string meetingEndTime,
+									   string roomName, long? roomCap)
+	{
+		Console.WriteLine("Meeting summary: " + summary);
+		Console.WriteLine("Meeting desc: " + description);
+		Console.WriteLine("Attendees: " + attendee);
+		
+		Console.WriteLine("Start Date: " + startDate);
+		Console.WriteLine("End Date: " + endDate);
+		Console.WriteLine("Start Time: " + meetingStartTime);
+		Console.WriteLine("End Time: " + meetingEndTime);
+		
+		Console.WriteLine("Room Name: " + roomName);
+		Console.WriteLine("Room Capacity: " + roomCap);
+		int? userId = HttpContext.Session.GetInt32("UserID");
+		if (userId == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+
+		using (_db)
+		{
+			// Get meeting creator
+			var user = _db.Users?.FirstOrDefault(u => u.UserId == userId);
+			if (user != null)
+			{
+				var creatorEmail = user.Email;
+				List<EventAttendee> attenders = new List<EventAttendee>
+				{
+					new EventAttendee() { Email = creatorEmail }
+				};
+				string[] attendees = attendee.Split(",");
+				for (int i = 0; i < attendees.Length; i++)
+				{
+					attenders.Add(new EventAttendee()
+					{
+						Email = attendees[i],
+					});
+				}
+
+				string createdBy = $"Created by: {creatorEmail}\n\n";
+				description = createdBy + description;
+
+				// Create meeting prompt
+				var room = _db.Rooms?.FirstOrDefault(r => r.RoomName.Equals(roomName));
+				if (_service != null && room != null && attendees.Length > 0)
+				{
+					Google.Apis.Calendar.v3.Data.Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+
+					DateTime.TryParse($"{startDate} {meetingStartTime}", CultureInfo.InvariantCulture, out DateTime start);
+					DateTime.TryParse($"{endDate} {meetingEndTime}", CultureInfo.InvariantCulture, out DateTime end);
+
+					bool isMeetingCreated = CalendarManager.CreateEvent(_service,
+												calendar,
+												summary,
+												description,
+												new EventDateTime()
+												{
+													DateTime = start,
+													TimeZone = "Asia/Jakarta"
+												},
+												new EventDateTime()
+												{
+													DateTime = end,
+													TimeZone = "Asia/Jakarta"
+												},
+												attenders);
+
+					Console.WriteLine("Creating Meeting : " + isMeetingCreated);
+				}
+			}
+		}
+
+		return View("Booking");
 	}
 }
