@@ -5,7 +5,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
 
     $(".modal-body").html(
         `
-        <form method="post" action="Booking/InsertEvent">
+        <form method="post" id="createMeetingForm" action="Booking/InsertEvent">
             <h5>Meeting Detail</h5>
             <hr class="full-width-hr">
                 <table class="table table-borderless">
@@ -25,10 +25,21 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                         </td>
                     </tr>
                     <tr>
+                        <td class="first-column desc">Attendee</td>
+                        <td>:</td>
+                        <td>
+                            <textarea type="text" name="attendees" class="second-column form-control"/>
+                            </textarea>
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="first-column">Date</td>
                         <td class="mediator-column">:</td>
                         <td>
                             <input type="text" name="startDate" class="second-column form-control" value="${startDate}" disabled/>
+                        </td>
+                        <td>
+                            <input type="text" name="endDate" class="second-column form-control" value="${endDate}" hidden/>
                         </td>
                     </tr>
                     <tr>
@@ -66,29 +77,83 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                     </tr>              
                 </table>
             <div style="text-align: right">
-                <input type="submit" class="btn btn-success" value="Create"/>
+                <input type="submit" class="btn btn-success" id="submit-meeting" value="Create"/>
                 <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
             </div>
         </form>
         `
     );
 
+    // var midnight = new Date("January 13 2000 00:00");
+    // var midnightHour = midnight.getHours();
+    // var midnightMinute = midnight.getMinutes();
+
+    var availStart = new Date("January 13 2000 " + startTime);
+    console.log("Avail Start: " + availStart);
+
+    if (availStart.getMinutes() > 30) {
+        availStart.setHours(availStart.getHours() + 1);
+        availStart.setMinutes(0);
+    } else if (availStart.getMinutes() > 0) {
+        availStart.setMinutes(30);
+    }
+
+    var availEnd = new Date("January 13 2000 " + endTime);
+    console.log("Avail End: " + availEnd);
+
     $('#modalStartTimepicker').timepicker({
-        timeFormat: 'h:i A',
-        minTime: startTime,
-        maxTime: endTime,
+        timeFormat: 'H:i',
+        minTime: availStart,
+        maxTime: availEnd,
         dynamic: false,
         dropdown: true,
-        scrollbar: true
+        scrollbar: true,
+        step: 30,
+        forceRoundTime: true
     });
 
     $('#modalEndTimepicker').timepicker({
-        timeFormat: 'h:i A',
-        minTime: startTime,
-        maxTime: endTime,
+        timeFormat: 'H:i',
+        minTime: availStart,
+        maxTime: availEnd,
         dynamic: false,
         dropdown: true,
-        scrollbar: true
+        scrollbar: true,
+        step: 30,
+        forceRoundTime: true
+    });
+
+    var startTimeInput = $('#modalStartTimepicker').val();
+    var endTimeInput = $('#modalEndTimepicker').val();
+
+    $('#modalStartTimepicker').on("change", function () {
+        startTimeInput = $("#modalStartTimepicker").val();
+        $('#modalEndTimepicker').timepicker('option', 'minTime', startTimeInput);
+        console.log("Start Time Input: " + startTimeInput);
+    });
+
+    $('#modalEndTimepicker').on("change", function () {
+        endTimeInput = $("#modalEndTimepicker").val();
+        console.log("End Time Input: " + endTimeInput);
+    });
+
+    $('#submit-meeting').on('click', function (event) {
+        // console.log("Start Time: " + startTime);
+        // console.log("Start Time Input: " + startTimeInput);
+        // console.log(startTimeInput < startTime);
+        // console.log("End Time Input: " + endTimeInput);
+        // console.log("Midnight Hour: " + midnightHour);
+        // console.log("End Time Hour: " + availEnd.getHours());
+        // console.log(availEnd.getHours() == midnightHour);
+        // event.preventDefault();
+
+        if (startTimeInput < startTime || (startTimeInput > endTime && availEnd.getHours() != 0)) {
+            alert("Invalid time! Please input start time within the range");
+            event.preventDefault();
+        } else if ((endTimeInput !== "00:00" && endTimeInput < startTime) || (endTimeInput > endTime && availEnd.getHours() != 0)) {
+            alert("Invalid time! Please input end time within the range");
+            event.preventDefault();
+        }
     });
 
     $(".modal").modal("show");
