@@ -13,18 +13,18 @@ public static class CalendarManager
 		{
 			HttpClientInitializer = credential
 		});
-		
+
 		return service;
 	}
-	
+
 	public static Calendar GenerateCalendar(CalendarService service, string? calId) // calendar's Id 
 	{
 		var calendar = service.Calendars.Get(calId).Execute();
 		return calendar;
 	}
-	
+
 	public static Events MakeRequest(
-		CalendarService service, 
+		CalendarService service,
 		Calendar calendar,
 		DateTime timeMin,
 		DateTime timeMax
@@ -38,19 +38,19 @@ public static class CalendarManager
 		listRequest.SingleEvents = true;
 		// listRequest.MaxResults = 10;
 		listRequest.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
-		
+
 		Events events = listRequest.Execute();
-		
+
 		return events;
 	}
-	
+
 	public static List<Event> GetEventList(Events events)
 	{
 		return events.Items.ToList();
 	}
 
-    [Obsolete]
-    public static bool ListingEvents(List<Event> events)
+	[Obsolete]
+	public static bool ListingEvents(List<Event> events)
 	{
 		if (events != null && events.Count > 0)
 		{
@@ -63,7 +63,7 @@ public static class CalendarManager
 				Console.WriteLine($"Event Description 	: {singleEvent.Description}");
 				Console.WriteLine($"Event Start/TimeZone: {singleEvent.Start.DateTime.ToString()}, {singleEvent.Start.TimeZone}");
 				Console.WriteLine($"Event End/Timezone	: {singleEvent.End.DateTime.ToString()}, {singleEvent.End.TimeZone}");
-				Console.WriteLine($"Event Attendees		: {singleEvent.Attendees}");		
+				Console.WriteLine($"Event Attendees		: {singleEvent.Attendees}");
 			}
 		}
 		else
@@ -72,24 +72,24 @@ public static class CalendarManager
 		}
 		return true;
 	}
-	
+
 	public static bool CreateEvent(
 		CalendarService service,
 		Calendar calendar,
 		string summary,
-		string location,
 		string description,
 		EventDateTime start,
-		EventDateTime end
+		EventDateTime end,
+		IList<EventAttendee> attendees
 	)
 	{
 		Event eventInsert = new Event()
 		{
 			Summary = summary,
-			Location = location,
 			Description = description,
 			Start = start,
 			End = end,
+			Attendees = attendees
 		};
 
 		var InsertRequest = service.Events.Insert(eventInsert, calendar.Id);
