@@ -52,88 +52,89 @@ public class BookingController : Controller
 		CalendarService service = CalendarManager.GenerateService(credential);
 		List<OptionRoom> optionRoomList = new();
 		
-		// GlobalFilter(startDate, endDate, startTime, endTime, capacity);
+		GlobalFilter(startDate, endDate, startTime, endTime, capacity);
 		
-		if (startDate == null && 
-			endDate == null &&
-			startTime == null &&
-			endTime == null &&
-			capacity == 0)
-		{
-			//	1. All Empty
-			optionRoomList = Filter();
-		} 
-		else if (startDate != null &&
-				endDate == null &&
-				startTime == null &&
-				endTime == null &&
-				capacity == 0)
-		{
-			// 2. startDate only
-			optionRoomList = Filter_SD(startDate);
-		} 
-		else if (startDate == null &&
-				endDate != null &&
-				startTime == null &&
-				endTime == null &&
-				capacity == 0)
-		{
-			// 3. endDateonly
-			optionRoomList = Filter_ED(endDate);
-		} 
-		else if (startDate != null &&
-				endDate != null &&
-				startTime == null &&
-				endTime == null &&
-				capacity == 0)
-		{
-			// 4. startDate and endDate
-			Filter_SDED(startDate, endDate);
-		} 
-		else if (startDate == null &&
-				endDate == null &&
-				startTime != null &&
-				endTime == null &&
-				capacity == 0)
-		{
-			// 5. startTime only
-			Filter_ST(startTime);
-		} 
-		else if (startDate == null &&
-				endDate == null &&
-				startTime == null &&
-				endTime != null &&
-				capacity == 0)
-		{
-			// 6. endTime only
-			Filter_ET(endTime);
-		} 
-		else if (startDate == null &&
-				endDate == null &&
-				startTime != null &&
-				endTime != null &&
-				capacity == 0)
-		{
-			// 7. startTime and endTime
-			Filter_STET(startTime, endTime);
-		} 
-		else if (startDate == null &&
-				endDate == null &&
-				startTime == null &&
-				endTime == null &&
-				capacity != 0)
-		{
-			// 8. capacity only
-			Filter_Cap(capacity);
-		}
-		else if (startDate != null &&
-				endDate != null &&
-				startTime != null &&
-				endTime != null &&
-				capacity != 0)
-		{
-			Filter_Complete(startDate, endDate, startTime, endTime, capacity);
-		}
+		// if (startDate == null && 
+		// 	endDate == null &&
+		// 	startTime == null &&
+		// 	endTime == null &&
+		// 	capacity == 0)
+		// {
+		// 	//	1. All Empty
+		// 	optionRoomList = Filter();
+		// } 
+		// else if (startDate != null &&
+		// 		endDate == null &&
+		// 		startTime == null &&
+		// 		endTime == null &&
+		// 		capacity == 0)
+		// {
+		// 	// 2. startDate only
+		// 	optionRoomList = Filter_SD(startDate);
+		// } 
+		// else if (startDate == null &&
+		// 		endDate != null &&
+		// 		startTime == null &&
+		// 		endTime == null &&
+		// 		capacity == 0)
+		// {
+		// 	// 3. endDateonly
+		// 	optionRoomList = Filter_ED(endDate);
+		// } 
+		// else if (startDate != null &&
+		// 		endDate != null &&
+		// 		startTime == null &&
+		// 		endTime == null &&
+		// 		capacity == 0)
+		// {
+		// 	// 4. startDate and endDate
+		// 	Filter_SDED(startDate, endDate);
+		// } 
+		// else if (startDate == null &&
+		// 		endDate == null &&
+		// 		startTime != null &&
+		// 		endTime == null &&
+		// 		capacity == 0)
+		// {
+		// 	// 5. startTime only
+		// 	Filter_ST(startTime);
+		// } 
+		// else if (startDate == null &&
+		// 		endDate == null &&
+		// 		startTime == null &&
+		// 		endTime != null &&
+		// 		capacity == 0)
+		// {
+		// 	// 6. endTime only
+		// 	Filter_ET(endTime);
+		// } 
+		// else if (startDate == null &&
+		// 		endDate == null &&
+		// 		startTime != null &&
+		// 		endTime != null &&
+		// 		capacity == 0)
+		// {
+		// 	// 7. startTime and endTime
+		// 	Filter_STET(startTime, endTime);
+		// } 
+		// else if (startDate == null &&
+		// 		endDate == null &&
+		// 		startTime == null &&
+		// 		endTime == null &&
+		// 		capacity != 0)
+		// {
+		// 	// 8. capacity only
+		// 	Filter_Cap(capacity);
+		// }
+		// else if (startDate != null &&
+		// 		endDate != null &&
+		// 		startTime != null &&
+		// 		endTime != null &&
+		// 		capacity != 0)
+		// {
+		// 	Filter_Complete(startDate, endDate, startTime, endTime, capacity);
+		// }
+		
 		userId = (int?)TempData.Peek("UserID");
 		
 		using (_db)
@@ -890,7 +891,7 @@ public class BookingController : Controller
 			}
 			else
 			{
-				end = new DateTime(start.Year, start.Month, start.Day, 0, 0, 0);
+				end = new DateTime(start.Year, start.Month, start.Day, 0, 0, 0).AddDays(1);
 			}
 		}
 		else if (endDate != null && endTime == null)
@@ -906,6 +907,11 @@ public class BookingController : Controller
 			end = parsedEndDate.ToDateTime(parsedEndTime);
 		}
 		
+		if (end < DateTime.Now)
+		{
+			end = DateTime.Today.AddDays(1);
+		}
+		
 		// defining capacity --> roomList
 		if (capacity == 0)
 		{
@@ -916,37 +922,104 @@ public class BookingController : Controller
 			roomList = FilterCapacity(capacity);
 		}
 		
+		Console.WriteLine("------------- 1 -------------");
+		Console.WriteLine($"start: {start}");
+		Console.WriteLine($"end : {end}");
+		Console.WriteLine($"capacity : {capacity}");
+
+		Calendar calendar;
+		UserCredential credential = GoogleOAuth.GenerateCredential();
+
 		// main logic
 		foreach (var room in roomList)
 		{
-			Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
-			
+			Console.WriteLine("------------- 2 -------------");
+			Console.WriteLine("Entering foreach (var room in roomList)");
+			_service = CalendarManager.GenerateService(credential);
+			calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+			Console.WriteLine("Passing through GenerateCAlendar");
+
 			int totalDays = (end.Day - start.Day);
+			
+			bool sameDaySpecifiedTime = false;
+			if (totalDays == 0)
+			{
+				if (start < end)
+				{
+					totalDays = 1;
+					sameDaySpecifiedTime = true;
+				}
+			}
+			if (totalDays < 0)
+			{
+				TimeSpan timespan = end - start;
+				totalDays = timespan.Days;
+			}
+			
 			DateTime startInRoom;
 			DateTime endInRoom;
 			
-			for (int i = 0; i <= totalDays; i++)
+			Console.WriteLine($"totalDays : {totalDays}");
+			
+			DateTime lastDay;
+			for (int i = 0; i < totalDays; i++)
 			{
 				DateTime currentDay = start.AddDays(i);
 				
 				if (currentDay.Date == start.Date)
 				{
 					startInRoom = start;
-					if (startTime != null && endTime != null)
+					if (endTime != null)
 					{
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);	
 					}
 					endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+					if (sameDaySpecifiedTime == true)
+					{
+						endInRoom = end;
+					}
+				}
+				else if (currentDay.Date == end.Date)
+				{
+					endInRoom = end;
+					if (startTime != null)
+					{
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);	
+					}
+					startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
 				}
 				else
 				{
 					if (startTime != null && endTime != null)
 					{
-						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);	
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
 					}
-					startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
-					endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+					else if (startTime != null && endTime == null)
+					{
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+					}
+					else if (startTime == null && endTime != null)
+					{
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+					}
+					else
+					{
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);	
+					}
+				}
+				
+				Console.WriteLine("------------- 3 -------------");
+				Console.WriteLine($"currentDat : {currentDay}");
+				Console.WriteLine($"startInRoom : {startInRoom}");
+				Console.WriteLine($"endInRoom : {endInRoom}");
+				
+				if (startInRoom == endInRoom) 
+				{
+					break;
 				}
 				
 				List<Event> events = CalendarManager.MakeRequest(
@@ -969,6 +1042,10 @@ public class BookingController : Controller
 						{
 							optionEnd = singleEventStart;
 							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+							Console.WriteLine("------------- 4 -------------");
+							Console.WriteLine($"Added New Option : {room.RoomName}");
+							Console.WriteLine($"				 : {optionStart}");
+							Console.WriteLine($"				 : {optionEnd}");	
 							optionStart = singleEventEnd;
 						}
 						else
@@ -978,13 +1055,25 @@ public class BookingController : Controller
 						lastEvent = singleEvent;
 					}
 					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));
+					Console.WriteLine("------------- 5 -------------");
+					Console.WriteLine($"Added New Option : {room.RoomName}");
+					Console.WriteLine($"				 : {lastEvent.End.DateTime}");
+					Console.WriteLine($"				 : {endInRoom}");	
 				}
 
 				if (events.Count == 0)
 				{
 					optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+					Console.WriteLine("------------- 6 -------------");
+					Console.WriteLine($"Added New Option : {room.RoomName}");
+					Console.WriteLine($"				 : {start}");
+					Console.WriteLine($"				 : {end}");		
 				}
+				lastDay = currentDay;
 			}
+			Console.WriteLine(" ");
+			Console.WriteLine("######################");
+			Console.WriteLine(" ");
 		}
 		
 		foreach (var room in optionRoomList)
