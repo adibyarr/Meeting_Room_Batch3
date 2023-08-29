@@ -15,7 +15,10 @@ public static class Program
 
         builder.Services.AddDistributedMemoryCache();
 
-        builder.Services.AddSession();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(10);
+        });
 
         var app = builder.Build();
 

@@ -17,7 +17,7 @@ public class UserController : Controller
 
 	public IActionResult Index(int? userId)
 	{
-		userId = (int?)TempData.Peek("UserID");
+		userId = HttpContext.Session.GetInt32("UserID");
 		if (userId != null)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
@@ -28,6 +28,11 @@ public class UserController : Controller
 
 	public IActionResult Privacy()
 	{
+		if (HttpContext.Session.GetInt32("UserID") == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+		
 		return View();
 	}
 
@@ -39,14 +44,24 @@ public class UserController : Controller
 
 	public IActionResult RoomList()
 	{
+		if (HttpContext.Session.GetInt32("UserID") == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+		
 		List<Room> roomList = _db.Rooms.ToList();
 		return View("RoomList", roomList);
 	}
 	public IActionResult Account(long? userId)
 	{
+		userId = HttpContext.Session.GetInt32("UserID");
+		if (HttpContext.Session.GetInt32("UserID") == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+		
 		Console.WriteLine("--- INSIDE ACCOUNT ---");
 
-		userId = (int?)TempData.Peek("UserID");
 		var user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
 
 		// Console.WriteLine($"from _db UserName : {user.Username}");

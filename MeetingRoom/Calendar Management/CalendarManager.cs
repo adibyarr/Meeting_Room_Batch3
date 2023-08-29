@@ -48,8 +48,9 @@ public static class CalendarManager
 	{
 		return events.Items.ToList();
 	}
-	
-	public static bool ListingEvents(List<Event> events)
+
+    [Obsolete]
+    public static bool ListingEvents(List<Event> events)
 	{
 		if (events != null && events.Count > 0)
 		{
