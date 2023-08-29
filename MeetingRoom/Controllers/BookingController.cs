@@ -8,6 +8,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using NuGet.Common;
+using Microsoft.AspNetCore.Http;
 
 namespace MeetingRoom.Controllers;
 
@@ -48,6 +49,12 @@ public class BookingController : Controller
 	[Obsolete]
 	public IActionResult AvailableRooms(long? userId, string startDate, string endDate, string startTime, string endTime, int capacity)
 	{
+		userId = HttpContext.Session.GetInt32("UserID");
+		if (userId == null)
+		{
+			return RedirectToAction("Index", "Login");
+		}
+		
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		List<OptionRoom> optionRoomList = new();
@@ -135,12 +142,10 @@ public class BookingController : Controller
 		// 	Filter_Complete(startDate, endDate, startTime, endTime, capacity);
 		// }
 		
-		userId = (int?)TempData.Peek("UserID");
-		
 		using (_db)
 		{
 			var user = _db.Users?.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-			return View("AvailableRooms", user);
+			return View("Booking", user);
 		}
 	}
 
@@ -175,7 +180,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 						optionStart = singleEventEnd;
 					} 
 					else if (start > singleEventStart && start < singleEventEnd)
@@ -188,12 +193,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 			}
 		}
 		
@@ -249,7 +254,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 						optionStart = singleEventEnd;
 					} 
 					else 
@@ -258,12 +263,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 			}
 		}
 		
@@ -352,7 +357,7 @@ public class BookingController : Controller
 						if (startInRoom < singleEventStart)
 						{
 							optionEnd = singleEventStart;
-							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+							// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 							optionStart = singleEventEnd;
 						}
 						else
@@ -361,12 +366,12 @@ public class BookingController : Controller
 						}
 						lastEvent = singleEvent;
 					}
-					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));
+					// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));
 				}
 
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+					// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 				}
 
 			}
@@ -451,7 +456,7 @@ public class BookingController : Controller
 						if (startInRoom < singleEventStart)
 						{
 							optionEnd = singleEventStart;
-							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+							// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 							optionStart = singleEventEnd;
 						}
 						else
@@ -460,12 +465,12 @@ public class BookingController : Controller
 						}
 						lastEvent = singleEvent;
 					}
-					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));		
+					// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));		
 				}
 				
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom));
+					// optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom));
 				}
 			}
 		}
@@ -520,7 +525,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 						optionStart = singleEventEnd;
 					} 
 					else if (start > singleEventStart && start < singleEventEnd)
@@ -533,12 +538,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 			}
 		}
 		
@@ -592,7 +597,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 						optionStart = singleEventEnd;
 					} 
 					else if (start > singleEventStart && start < singleEventEnd)
@@ -605,12 +610,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 			}
 		}
 		
@@ -665,7 +670,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						// optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
 						optionStart = singleEventEnd;
 					} 
 					else if (start > singleEventStart && start < singleEventEnd)
@@ -678,12 +683,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				// optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
 			}
 		}
 		
@@ -731,7 +736,7 @@ public class BookingController : Controller
 					if (start < singleEventStart)
 					{
 						optionEnd = singleEventStart;
-						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+						optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, capacity));
 						optionStart = singleEventEnd;
 					} 
 					else if (start > singleEventStart && start < singleEventEnd)
@@ -744,12 +749,12 @@ public class BookingController : Controller
 					}
 					lastEvent = singleEvent;
 				}
-				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end));
+				optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, end, capacity));
 			}
 			
 			if (events.Count == 0)
 			{
-				optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+				optionRoomList.Add(new OptionRoom(room.RoomName, start, end, capacity));
 			}
 		}
 		
@@ -815,7 +820,7 @@ public class BookingController : Controller
 				
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom));
+					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, capacity));
 				}
 			}
 		}
@@ -910,7 +915,7 @@ public class BookingController : Controller
 		if (end < DateTime.Now)
 		{
 			end = DateTime.Today.AddDays(1);
-		}
+		} // tambahi if end < start?
 		
 		// defining capacity --> roomList
 		if (capacity == 0)
@@ -946,13 +951,13 @@ public class BookingController : Controller
 			{
 				if (start < end)
 				{
-					totalDays = 1;
+					// totalDays = 1;
 					sameDaySpecifiedTime = true;
 				}
 			}
 			if (totalDays < 0)
 			{
-				TimeSpan timespan = end - start;
+				TimeSpan timespan = end.Date - start.Date;
 				totalDays = timespan.Days;
 			}
 			
@@ -962,7 +967,7 @@ public class BookingController : Controller
 			Console.WriteLine($"totalDays : {totalDays}");
 			
 			DateTime lastDay;
-			for (int i = 0; i < totalDays; i++)
+			for (int i = 0; i <= totalDays; i++)
 			{
 				DateTime currentDay = start.AddDays(i);
 				
@@ -972,8 +977,17 @@ public class BookingController : Controller
 					if (endTime != null)
 					{
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);	
+						// Check semua kondisi yang hasilnya empty pake ini :
+						if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+						{
+							endInRoom = end;	
+						}
 					}
-					endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+					else
+					{
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);	
+					}
+					
 					if (sameDaySpecifiedTime == true)
 					{
 						endInRoom = end;
@@ -986,7 +1000,10 @@ public class BookingController : Controller
 					{
 						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);	
 					}
-					startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
+					else
+					{
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);	
+					}
 				}
 				else
 				{
@@ -997,13 +1014,15 @@ public class BookingController : Controller
 					}
 					else if (startTime != null && endTime == null)
 					{
-						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
+						// startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
 					}
 					else if (startTime == null && endTime != null)
 					{
 						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
-						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
 					}
 					else
 					{
@@ -1017,7 +1036,7 @@ public class BookingController : Controller
 				Console.WriteLine($"startInRoom : {startInRoom}");
 				Console.WriteLine($"endInRoom : {endInRoom}");
 				
-				if (startInRoom == endInRoom) 
+				if (startInRoom == endInRoom || startInRoom > endInRoom) 
 				{
 					break;
 				}
@@ -1041,7 +1060,7 @@ public class BookingController : Controller
 						if (startInRoom < singleEventStart)
 						{
 							optionEnd = singleEventStart;
-							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd));
+							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));
 							Console.WriteLine("------------- 4 -------------");
 							Console.WriteLine($"Added New Option : {room.RoomName}");
 							Console.WriteLine($"				 : {optionStart}");
@@ -1054,7 +1073,7 @@ public class BookingController : Controller
 						}
 						lastEvent = singleEvent;
 					}
-					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom));
+					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
 					Console.WriteLine("------------- 5 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
 					Console.WriteLine($"				 : {lastEvent.End.DateTime}");
@@ -1063,11 +1082,11 @@ public class BookingController : Controller
 
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, start, end));
+					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));
 					Console.WriteLine("------------- 6 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
-					Console.WriteLine($"				 : {start}");
-					Console.WriteLine($"				 : {end}");		
+					Console.WriteLine($"				 : {startInRoom}");
+					Console.WriteLine($"				 : {endInRoom}");		
 				}
 				lastDay = currentDay;
 			}
@@ -1083,6 +1102,8 @@ public class BookingController : Controller
 			Console.WriteLine($"Start : {room.StartDate}");
 			Console.WriteLine($"End : {room.EndDate}");
 		}
+		
+		Console.WriteLine("");
 		
 		return optionRoomList;
 	}
