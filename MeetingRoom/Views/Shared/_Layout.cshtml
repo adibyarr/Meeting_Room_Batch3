@@ -82,13 +82,13 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item user-profile">
+                                <div class="user-details">
+                                    <span class="username">Welcome, <strong>@Context.Session.GetString("UserName")</strong>!</span>
+                                    <span class="role">@Context.Session.GetString("Role")</span>
+                                </div>
                                 <div class="avatar">
                                     <img src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
                                         class="rounded-circle" style="width: 40px;" alt="Avatar" />
-                                </div>
-                                <div class="user-details">
-                                    <span class="username"> @Context.Session.GetString("UserName")</span>
-                                    <span class="role">@Context.Session.GetString("Role")</span>
                                 </div>
                             </li>
                         </ul>

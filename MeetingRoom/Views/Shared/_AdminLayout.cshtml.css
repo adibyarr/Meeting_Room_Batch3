@@ -333,3 +333,8 @@ a.article:hover {
     font-size: 3rem;
     font-weight: 100;
   }
+
+  .ml-auto {
+    margin-left: auto;
+    margin-right: 0;
+  }

@@ -197,3 +197,8 @@ a.article:hover {
 .menu-text {
   padding-left: 10px;
 }
+
+.ml-auto {
+  margin-left: auto;
+  margin-right: 0;
+}
