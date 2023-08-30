@@ -207,6 +207,7 @@ public class AdminController : Controller
 
 		return RedirectToAction("RoomList");
 	}
+	
 	public IActionResult Account(long? userId)
 	{
 		userId = HttpContext.Session.GetInt32("UserID");
