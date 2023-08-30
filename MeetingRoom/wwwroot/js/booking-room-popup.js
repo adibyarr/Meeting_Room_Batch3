@@ -87,7 +87,7 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
                     </tr>              
                 </table>
             <div style="text-align: right">
-                <input type="submit" class="btn btn-success" id="submit-meeting" value="Create"/>
+                <input type="submit" class="btn btn-success" id="submit-meeting" value="Reserve"/>
                 <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
             </div>
         </form>
