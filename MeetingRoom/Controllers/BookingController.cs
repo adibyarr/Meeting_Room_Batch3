@@ -56,6 +56,11 @@ public class BookingController : Controller
 			return RedirectToAction("Index", "Login");
 		}
 
+		Console.WriteLine($"startDate : {startDate}");
+		Console.WriteLine($"startTime : {startTime}");
+		Console.WriteLine($"endDate : {endDate}");
+		Console.WriteLine($"endTime : {endTime}");
+
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		List<OptionRoom> optionRoomList = new();
@@ -216,20 +221,42 @@ public class BookingController : Controller
 					startInRoom = start;
 					if (endTime != null)
 					{
+						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// // Check semua kondisi yang hasilnya empty pake ini :
+						// if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+						// {
+						// 	endInRoom = end;
+						// 	if (currentDay.Date != end.Date)
+						// 	{
+						// 		endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// 	}
+						// }
+						
+						// if (end.Date > start.Date)
+						// {
+						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// }
+						
+						// if (startDate != null && startTime != null && endDate != null && endTime != null)
+						// {
+						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// }
+						
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// Check semua kondisi yang hasilnya empty pake ini :
-						if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+						if (start.Date == end.Date)
 						{
-							endInRoom = end;
-							if (currentDay.Date != end.Date)
+							if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
 							{
 								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
 							}
-						}
-						
-						if (end.Date > start.Date)
+							else if (parsedEndTime > TimeOnly.FromDateTime(DateTime.Now))
+							{
+								endInRoom = end;
+							}
+						} 
+						else
 						{
-							endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+							endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
 						}
 					}
 					else
