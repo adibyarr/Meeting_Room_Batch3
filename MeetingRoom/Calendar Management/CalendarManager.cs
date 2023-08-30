@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -26,6 +27,11 @@ public static class CalendarManager
 	public static Calendar CreateCalendar(CalendarService service, Calendar calendar)
 	{
 		return service.Calendars.Insert(calendar).Execute();
+	}
+
+	public static string UpdateCalendar(CalendarService service, Calendar calendar, string calId) {
+		Calendar updatedCalendar = service.Calendars.Update(calendar, calId).Execute();
+		return updatedCalendar.ETag;
 	}
 
 	public static void DeleteCalendar(CalendarService service, string calId)

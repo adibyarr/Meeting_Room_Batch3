@@ -151,7 +151,6 @@ public class AdminController : Controller
 				room.Link = newCalendar.Id;
 				_db.Rooms.Add(room);
 				_db.SaveChanges();
-				return RedirectToAction("RoomList");
 			}
 		}
 		return RedirectToAction("RoomList");
@@ -191,15 +190,19 @@ public class AdminController : Controller
 
 			var roomExisted = _db.Rooms.Where(room => room.RoomName == roomName).ToList();
 
-			if (room != null || !roomExisted.Any() || roomExisted == null)
+			if (!roomExisted.Any() || roomExisted == null)
 			{
+				Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+				calendar.Summary = roomName;
+				calendar.Description = description;
+				string updatedCalendar = CalendarManager.UpdateCalendar(_service, calendar, room.Link);
+				// Console.WriteLine(updatedCalendar);
+
 				room.RoomName = roomName;
 				room.Capacity = capacity;
 				room.Description = description;
 				_db.SaveChanges();
-				return RedirectToAction("RoomList");
 			}
-
 		}
 
 		return RedirectToAction("RoomList");
