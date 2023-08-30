@@ -4,8 +4,6 @@ $("#datepicker").datepicker({
     selectOtherMonths: true
 });
 
-var startDate = new Date();
-
 $("#datepicker2").datepicker({
     minDate: 0,
     showOtherMonths: true,
@@ -41,7 +39,7 @@ var datepick2DateNow = datepick2.getDate();
 var datepick2MonthNow = datepick2.getMonth();
 var datepick2YearNow = datepick2.getFullYear();
 
-var startDate = new Date();
+var startDate = new Date().toDateString();
 $("#datepicker").on("change", function () {
     startDate = $("#datepicker").datepicker('getDate');
     $('#datepicker2').datepicker('option', 'minDate', startDate);

@@ -1104,12 +1104,21 @@ public class BookingController : Controller
 	}
 
 	[HttpPost]
-	[Obsolete]
+	[Route("Booking/InsertMeeting")]
 	public IActionResult InsertMeeting(string summary, string description, string attendee,
 									   string startDate, string endDate,
 									   string meetingStartTime, string meetingEndTime,
 									   string roomName, long? roomCap)
 	{
+		// summary = "Final Project Discussion";
+		// description = "Group Discuss";
+		// startDate = "31/08/2023";
+		// endDate = "31/08/2023";
+		// meetingStartTime = "09:00";
+		// meetingEndTime = "12:00";
+		// roomName = "Merapi";
+		// roomCap = 5;
+
 		Console.WriteLine("Meeting summary: " + summary);
 		Console.WriteLine("Meeting desc: " + description);
 		Console.WriteLine("Attendees: " + attendee);
@@ -1152,27 +1161,31 @@ public class BookingController : Controller
 
 				// Create meeting prompt
 				var room = _db.Rooms?.FirstOrDefault(r => r.RoomName.Equals(roomName));
-				if (_service != null && room != null && attendees.Length > 0)
+				Console.WriteLine("Room Calendar Link: " + room.Link);
+				if (_service != null && room != null)
 				{
 					Google.Apis.Calendar.v3.Data.Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+					
+					// Start meeting DateTime
+					DateOnly.TryParse(startDate, out var startDateOnly);
+					TimeOnly.TryParse(meetingStartTime, CultureInfo.InvariantCulture, out var startTimeOnly);
+					DateTime start = startDateOnly.ToDateTime(startTimeOnly);
 
-					DateTime.TryParse($"{startDate} {meetingStartTime}", CultureInfo.InvariantCulture, out DateTime start);
-					DateTime.TryParse($"{endDate} {meetingEndTime}", CultureInfo.InvariantCulture, out DateTime end);
+					DateOnly.TryParse(endDate, out var endDateOnly);
+					TimeOnly.TryParse(meetingEndTime, CultureInfo.InvariantCulture, out var endTimeOnly);
+					DateTime end = endDateOnly.ToDateTime(endTimeOnly);
+					Console.WriteLine("Start Date Time : " + start);
+					Console.WriteLine("End Date Time : " + end);
+
+					EventDateTime meetingStart = new EventDateTime() { DateTimeDateTimeOffset = start, TimeZone = "Asia/Jakarta" };
+					EventDateTime meetingEnd = new EventDateTime() { DateTimeDateTimeOffset = end, TimeZone = "Asia/Jakarta" };
 
 					bool isMeetingCreated = CalendarManager.CreateEvent(_service,
 												calendar,
 												summary,
 												description,
-												new EventDateTime()
-												{
-													DateTime = start,
-													TimeZone = "Asia/Jakarta"
-												},
-												new EventDateTime()
-												{
-													DateTime = end,
-													TimeZone = "Asia/Jakarta"
-												},
+												meetingStart,
+												meetingEnd,
 												attenders);
 
 					Console.WriteLine("Creating Meeting : " + isMeetingCreated);

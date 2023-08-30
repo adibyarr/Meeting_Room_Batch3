@@ -99,8 +99,9 @@ public static class CalendarManager
 			InsertRequest.Execute();
 			return true;
 		}
-		catch (Exception)
+		catch (Exception ex)
 		{
+			Console.WriteLine("Insert event failed: " + ex.Message);
 			try
 			{
 				service.Events.Update(eventInsert, calendar.Id, eventInsert.Id).Execute();
@@ -108,7 +109,7 @@ public static class CalendarManager
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.Message);
+				Console.WriteLine("Update event failed: " + e.Message);
 				return false;
 			}
 		}

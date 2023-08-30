@@ -1,11 +1,14 @@
 function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endTime) {
-    // console.log("End Date: " + endDate);
-    if (startTime === "0:00") {
-        startTime = "00:00";
+    console.log("Start Time Length: " + startTime[0]);
+    console.log("End Time Length: " + endTime[0]);
+    if (startTime.length < 5) {
+        startTime = "0".concat(startTime);
+        console.log("New start time: " + startTime);
     }
 
-    if (endTime === "0:00") {
-        endTime = "00:00";
+    if (endTime.length < 5) {
+        endTime = "0".concat(endTime);
+        console.log("New end time: " + endTime);
     }
 
     $(".modal-title").html("Meeting Room Reservation");
@@ -152,8 +155,9 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
         console.log("Start Time Input: " + startTimeInput);
         console.log(startTimeInput < startTime);
         console.log(startTimeInput > endTime);
+        console.log("End Time: " + endTime);
         console.log("End Time Input: " + endTimeInput);
-        console.log("End Time Hour: " + availEnd.getHours());
+        // console.log("End Time Hour: " + availEnd.getHours());
         console.log("Meeting Desc: " + $('#desc').val());
         console.log("Meeting Attendees: " + $('#attendee').val());
         // event.preventDefault();
@@ -164,8 +168,9 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
         } else if ((endTimeInput !== "00:00" && endTimeInput < startTime) || endTimeInput > endTime) {
             alert("Invalid time! Please input end time within the range");
             event.preventDefault();
+        } else {
+            alert("Meeting Room Reserved Successfully");
         }
-        alert("Meeting Room Reserved Successfully");
     });
 
     $(".modal").modal("show");
