@@ -185,12 +185,12 @@ public class AdminController : Controller
 	public IActionResult EditRoom(long roomId, string roomName, long capacity, string description)
 	{
 		if (ModelState.IsValid)
-		{
+		{	
 			Room? room = _db.Rooms?.Find(roomId);
+			
+			var roomExisted = _db.Rooms.FirstOrDefault(room => room.RoomName == roomName);
 
-			var roomExisted = _db.Rooms.Where(room => room.RoomName == roomName).ToList();
-
-			if (!roomExisted.Any() || roomExisted == null)
+			if (roomExisted == null || roomExisted.RoomId == roomId)
 			{
 				Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
 				calendar.Summary = roomName;
