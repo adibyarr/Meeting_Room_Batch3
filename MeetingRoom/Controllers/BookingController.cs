@@ -1113,12 +1113,12 @@ public class BookingController : Controller
 		Console.WriteLine("Meeting summary: " + summary);
 		Console.WriteLine("Meeting desc: " + description);
 		Console.WriteLine("Attendees: " + attendee);
-		
+
 		Console.WriteLine("Start Date: " + startDate);
 		Console.WriteLine("End Date: " + endDate);
 		Console.WriteLine("Start Time: " + meetingStartTime);
 		Console.WriteLine("End Time: " + meetingEndTime);
-		
+
 		Console.WriteLine("Room Name: " + roomName);
 		Console.WriteLine("Room Capacity: " + roomCap);
 		int? userId = HttpContext.Session.GetInt32("UserID");
@@ -1143,7 +1143,7 @@ public class BookingController : Controller
 				{
 					attenders.Add(new EventAttendee()
 					{
-						Email = attendees[i],
+						Email = attendees[i].Trim()
 					});
 				}
 
@@ -1176,6 +1176,10 @@ public class BookingController : Controller
 												attenders);
 
 					Console.WriteLine("Creating Meeting : " + isMeetingCreated);
+				}
+				foreach (var attender in attenders)
+				{
+					Console.WriteLine(attender.Email);
 				}
 			}
 		}
