@@ -23,10 +23,20 @@ public static class CalendarManager
 		return calendar;
 	}
 
+	public static Calendar CreateCalendar(CalendarService service, Calendar calendar)
+	{
+		return service.Calendars.Insert(calendar).Execute();
+	}
+
+	public static void DeleteCalendar(CalendarService service, string calId)
+	{
+		service.Calendars.Delete(calId).Execute();
+	}
+
 	public static Events MakeRequest(
 		CalendarService service,
 		Calendar calendar,
-        DateTime timeMin,
+		DateTime timeMin,
 		DateTime timeMax
 	)
 	{
@@ -115,13 +125,13 @@ public static class CalendarManager
 		}
 	}
 
-    // internal static Events MakeRequest(CalendarService service, Calendar calendar, DateTime start, DateTime end)
-    // {
-    //     throw new NotImplementedException();
-    // }
+	// internal static Events MakeRequest(CalendarService service, Calendar calendar, DateTime start, DateTime end)
+	// {
+	//     throw new NotImplementedException();
+	// }
 
-    // internal static Event MakeRequest(CalendarService service, Calendar calendar, string startDate)
-    // {
-    //     throw new NotImplementedException();
-    // }
+	// internal static Event MakeRequest(CalendarService service, Calendar calendar, string startDate)
+	// {
+	//     throw new NotImplementedException();
+	// }
 }
