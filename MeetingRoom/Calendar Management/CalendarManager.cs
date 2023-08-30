@@ -26,7 +26,6 @@ public static class CalendarManager
 	public static Events MakeRequest(
 		CalendarService service, 
 		Calendar calendar,
-        string startDate,
         DateTime timeMin,
 		DateTime timeMax
 	)
@@ -114,13 +113,13 @@ public static class CalendarManager
 		}
 	}
 
-    internal static Events MakeRequest(CalendarService service, Calendar calendar, DateTime start, DateTime end)
-    {
-        throw new NotImplementedException();
-    }
+    // internal static Events MakeRequest(CalendarService service, Calendar calendar, DateTime start, DateTime end)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
-    internal static Event MakeRequest(CalendarService service, Calendar calendar, string startDate)
-    {
-        throw new NotImplementedException();
-    }
+    // internal static Event MakeRequest(CalendarService service, Calendar calendar, string startDate)
+    // {
+    //     throw new NotImplementedException();
+    // }
 }
