@@ -6,16 +6,28 @@ using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Newtonsoft.Json;
+using Google.Apis.Calendar.v3.Data;
+using CalendarAPI;
+using Google.Apis.Calendar.v3;
+using Google.Apis.Auth.OAuth2;
 
 namespace MeetingRoom.Controllers;
 
 public class AdminController : Controller
 {
 	private readonly MeetingRoomDbContext _db;
+	private static CalendarService? _service;
 
 	public AdminController(MeetingRoomDbContext db)
 	{
 		_db = db;
+		InitService();
+	}
+
+	public void InitService()
+	{
+		UserCredential credential = GoogleOAuth.GenerateCredential();
+		_service = CalendarManager.GenerateService(credential);
 	}
 
 	public IActionResult Index(int? userId)
@@ -127,10 +139,18 @@ public class AdminController : Controller
 
 			if ((roomExisted is null) || !roomExisted.Any())
 			{
+				Calendar calendar = new Calendar
+				{
+					Summary = roomName,
+					TimeZone = "Asia/Jakarta",
+					Description = description
+				};
+
+				Calendar newCalendar = CalendarManager.CreateCalendar(_service, calendar);
 				// return RedirectToAction("RoomList");
+				room.Link = newCalendar.Id;
 				_db.Rooms.Add(room);
 				_db.SaveChanges();
-				return RedirectToAction("RoomList");
 			}
 		}
 		return RedirectToAction("RoomList");
@@ -142,16 +162,17 @@ public class AdminController : Controller
 	{
 		if (ModelState.IsValid)
 		{
-			var room = _db.Rooms.Where(room => room.RoomId == roomId).ToList();
+			var room = _db.Rooms.FirstOrDefault(room => room.RoomId == roomId);
 
 			Console.WriteLine($"DELETE 1. Room ID : {roomId}");
-			if ((room is null) || (!room.Any()))
+			if (room is null)
 			{
 				Console.WriteLine($"DELETE 2. Room ID : {roomId}");
 				return RedirectToAction("RoomList");
 			}
 
 			Console.WriteLine($"DELETE 3. Room ID : {roomId}");
+			CalendarManager.DeleteCalendar(_service, room.Link);
 			_db.Rooms.RemoveRange(room);
 			_db.SaveChanges();
 		}
@@ -167,15 +188,26 @@ public class AdminController : Controller
 		{
 			Room? room = _db.Rooms?.Find(roomId);
 
-			room.RoomName = roomName;
-			room.Capacity = capacity;
-			room.Description = description;
+			var roomExisted = _db.Rooms.Where(room => room.RoomName == roomName).ToList();
 
-			_db.SaveChanges();
+			if (!roomExisted.Any() || roomExisted == null)
+			{
+				Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
+				calendar.Summary = roomName;
+				calendar.Description = description;
+				string updatedCalendar = CalendarManager.UpdateCalendar(_service, calendar, room.Link);
+				// Console.WriteLine(updatedCalendar);
+
+				room.RoomName = roomName;
+				room.Capacity = capacity;
+				room.Description = description;
+				_db.SaveChanges();
+			}
 		}
 
 		return RedirectToAction("RoomList");
 	}
+	
 	public IActionResult Account(long? userId)
 	{
 		userId = HttpContext.Session.GetInt32("UserID");
