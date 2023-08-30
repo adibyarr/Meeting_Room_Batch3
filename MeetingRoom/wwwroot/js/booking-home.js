@@ -28,6 +28,12 @@ var now = new Date();
 var dateNow = now.getDate();
 var monthNow = now.getMonth();
 var yearNow = now.getFullYear();
+if (now.getMinutes() > 30) {
+    now.setHours(availStart.getHours() + 1);
+    now.setMinutes(0);
+} else if (now.getMinutes() > 0) {
+    now.setMinutes(30);
+}
 
 var datepick = new Date();
 var datepickDateNow = datepick.getDate();

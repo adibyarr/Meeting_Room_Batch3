@@ -7,7 +7,100 @@
         Layout = "~/Views/Shared/_AdminLayout.cshtml";
     }
 }
+<head>
+    <title>Calendar Event</title>
 
-<iframe
-    src="https://calendar.google.com/calendar/embed?src=d69d87c4b0d6ef4cd55b626a2e668e5fd526b6213f326401aef9b3745a06a59a%40group.calendar.google.com&ctz=Asia%2FJakarta"
-    style="border: 0" width="1300" height="600" frameborder="0" scrolling="no"></iframe>
+    <link href="/docs/dist/demo-to-codepen.css" rel="stylesheet">    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica , sans-serif;
+            font-size: 18%;
+        }
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+    <script src="/docs/dist/demo-to-codepen.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Meeting Room Reservation</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="~/lib/fontawesome/dist/css/all.min.css" />
+    <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MeetingRoom.styles.css" asp-append-version="true" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/fontawesome/dist/js/all.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <link rel="icon" href="/favicon-32x32.png?v=63734d4d33b09dc30c8e6c8f0ff38e19" type="image/png">
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-8LM1SN3K0E"></script>
+    <script>
+        
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-8LM1SN3K0E');
+    
+    </script>
+    <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;dc4641f860664c6e824b093274f50291&quot;}"></script>
+    <script>
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      timeZone: 'UTC',
+      initialView: 'dayGridMonth',
+      events: '/api/demo-feeds/events.json',
+      editable: true,
+      selectable: true
+    });
+
+    calendar.render();
+  });
+
+</script>
+</head>
+<body>
+<div class="demo-topbar">
+    @* Calendar Meeting *@
+    </div>
+    <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
+        <div class="fc-toolbar-chunk">
+            <h2 class="fc-toolbar-title" id="fc-dom-1">
+                August 2023
+            </h2>
+            <div class="fc-toolbar-chunk">
+            <div class="fc-toolbar-chunk">
+                <button type="button" title="This Month" aria-pressed="false" class="fc-today-button fc-button fc-button-primary">today</button>
+                <div class="fc-button-group">
+                    <button type="button" title="Previous month" aria-pressed="false" class="fc-prev-button fc-button fc-button-primary">
+                        <span class="fc-icon fc-icon-chevron-left"></span>
+                        </button>
+                        <button type="button" title="Next month" aria-pressed="false" class="fc-next-button fc-button fc-button-primary"><span class="fc-icon fc-icon-chevron-right"></span>
+                        </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    $(document).ready(function(){
+        
+    })
+</script>
+</body>
