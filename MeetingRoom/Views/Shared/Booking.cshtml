@@ -1,10 +1,13 @@
-@model MeetingRoomWebApp.AutoGen.User
+@model IEnumerable<OptionRoom>
 
 @{
     ViewBag.Title = "Booking";
-    if (Model.Roles.RoleName == "Admin")
+    if (Context.Session.GetString("Role") != null)
     {
-        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        if (Context.Session.GetString("Role").Equals("Admin"))
+        {
+            Layout = "~/Views/Shared/_AdminLayout.cshtml";
+        }
     }
 }
 <style>
@@ -49,7 +52,7 @@
     <div class="container rounded bg-white mt-5"></div>
     <div class="mx-auto" style="max-width: 600px;">
         <form method="post" action="/Booking/AvailableRooms">
-            <input type="hidden" name="userId" value="@Model.UserId" />
+            <input type="hidden" name="userId" value="@ViewData["UserId"]" />
             <table class="table table-borderless">
                 <tr>
                     <td class="booking-first-column">
@@ -80,11 +83,11 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" name="startTime" placeholder="hh:mm AM/PM"
+                                    <input type="text" class="form-control" name="startTime" placeholder="HH:mm"
                                         id="timepicker" autocomplete="off" />
                                 </div>
                                 <div class="col-sm">
-                                    <input type="text" class="form-control" name="endTime" placeholder="hh:mm AM/PM"
+                                    <input type="text" class="form-control" name="endTime" placeholder="HH:mm"
                                         id="timepicker2" autocomplete="off" />
                                 </div>
                             </div>
@@ -111,7 +114,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-sm">
-                        <input type="submit" class="btn btn-success" value="Find Room" />
+                        <input type="submit" class="btn btn-primary" value="Find Room" />
                     </div>
                 </div>
             </div>
@@ -147,28 +150,35 @@
                 </tr>
             </thead>
 
-            <tbody>
-                <tr>
-                    <td scope="col" class="column">
-                        Andong
-                    </td>
-                    <td scope="col" class="column">
-                        5
-                    </td>
-                    <td scope="col" class="column">
-                        30/08/2023
-                    </td>
-                    <td scope="col" class="column">
-                        09.00 - 11.00
-                    </td>
-                    <td scope="col" class="column">
-                        <button class="btn btn-success"
-                            onclick="popupChooseRoom('Andong', '5', '30/08/2023', '30/08/2023', '09.00', '11.00')">
-                            Choose
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
+            @if (Model != null)
+            {
+                foreach (var availRoom in Model)
+                {
+                    <tbody>
+                        <tr>
+                            <td scope="col" class="column">
+                                @availRoom.RoomName
+                            </td>
+                            <td scope="col" class="column">
+                                @availRoom.Capacity
+                            </td>
+                            <td scope="col" class="column">
+                                @DateOnly.FromDateTime((DateTime)availRoom.StartDate)
+                            </td>
+                            <td scope="col" class="column">
+                                @TimeOnly.FromDateTime((DateTime)availRoom.StartDate) -
+                                @TimeOnly.FromDateTime((DateTime)availRoom.EndDate)
+                            </td>
+                            <td scope="col" class="column">
+                                <button class="btn btn-primary"
+                                    onclick="popupChooseRoom('@availRoom.RoomName', '@availRoom.Capacity', '@DateOnly.FromDateTime((DateTime)availRoom.StartDate)', '@DateOnly.FromDateTime((DateTime)availRoom.EndDate)', '@TimeOnly.FromDateTime((DateTime)availRoom.StartDate)', '@TimeOnly.FromDateTime((DateTime)availRoom.EndDate)')">
+                                    Choose
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+            }
     </div>
 
     @* Pop Up Window *@
@@ -186,78 +196,5 @@
     </div>
 </div>
 
-<script>
-    $("#datepicker").datepicker({
-        minDate: 0,
-        showOtherMonths: true,
-        selectOtherMonths: true
-    });
-
-    var startDate = $("#datepicker").datepicker('getDate');
-
-    $("#datepicker2").datepicker({
-        minDate: 0,
-        showOtherMonths: true,
-        selectOtherMonths: true
-    });
-
-    $('#timepicker').timepicker({
-        timeFormat: 'h:i A',
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true,
-    });
-
-    $('#timepicker2').timepicker({
-        timeFormat: 'h:i A',
-        dynamic: false,
-        dropdown: true,
-        scrollbar: true,
-    });
-
-    var now = new Date();
-    var dateNow = now.getDate();
-    var monthNow = now.getMonth();
-    var yearNow = now.getFullYear();
-
-    var datepick = new Date();
-    var datepickDateNow = datepick.getDate();
-    var datepickMonthNow = datepick.getMonth();
-    var datepickYearNow = datepick.getFullYear();
-
-    var datepick2 = new Date();
-    var datepick2DateNow = datepick2.getDate();
-    var datepick2MonthNow = datepick2.getMonth();
-    var datepick2YearNow = datepick2.getFullYear();
-
-    var startDate = new Date();
-    $("#datepicker").on("change", function () {
-        startDate = $("#datepicker").datepicker('getDate');
-        $('#datepicker2').datepicker('option', 'minDate', startDate);
-        datepick = $(this).datepicker('getDate');
-        datepickDateNow = datepick.getDate();
-        datepickMonthNow = datepick.getMonth();
-        datepickYearNow = datepick.getFullYear();
-        if (datepickDateNow == dateNow && datepickMonthNow == monthNow && datepickYearNow == yearNow) {
-            $('#timepicker').timepicker('option', 'minTime', now);
-        } else {
-            $('#timepicker').timepicker('option', 'minTime', '0');
-        }
-    });
-
-    $("#datepicker2").on("change", function () {
-        datepick2 = $(this).datepicker('getDate');
-        datepick2DateNow = datepick2.getDate();
-        datepick2MonthNow = datepick2.getMonth();
-        datepick2YearNow = datepick2.getFullYear();
-    });
-
-    var initTime;
-    $('#timepicker').on("change", function () {
-        initTime = $("#timepicker").val() || "something";
-        if (initTime != "something")
-            $('#timepicker2').timepicker('option', 'minTime', initTime);
-        console.log(initTime);
-    });
-</script>
+<script src="~/js/booking-home.js"></script>
 <script src="~/js/booking-room-popup.js"></script>
