@@ -106,8 +106,9 @@ public static class CalendarManager
 				service.Events.Update(eventInsert, calendar.Id, eventInsert.Id).Execute();
 				return true;
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
+				Console.WriteLine(e.Message);
 				return false;
 			}
 		}
