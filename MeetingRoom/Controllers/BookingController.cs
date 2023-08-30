@@ -262,7 +262,22 @@ public class BookingController : Controller
 						} 
 						else
 						{
-							endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+							if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+							{
+								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+								// endInRoom = null;
+								// got the notion of equalizing endInRoom with startInRoom. effect: will not add current day. result: no.lol
+								// endInRoom = new DateTime(start.Year, start.Month, start.Day, start.Hour, start.Minute, start.Second+1);
+								// got another notion. purpose, excluding today. no, lol
+								if (startDate != null && endDate != null)
+								{
+									endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);		
+								}
+							}
+							else
+							{
+								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);	
+							}
 						}
 					}
 					else
@@ -296,15 +311,23 @@ public class BookingController : Controller
 					}
 					else if (startTime != null && endTime == null)
 					{
-						// startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
-						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
+						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
+						// startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// if (startDate != null && endDate != null)
+						// {
+						// 	startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
+						// }
 					}
 					else if (startTime == null && endTime != null)
 					{
 						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
-						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// if (startDate != null && endDate != null)
+						// {
+						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// }
 					}
 					else
 					{
