@@ -96,10 +96,16 @@ public class BookingController : Controller
 		DateOnly.TryParse(endDate, CultureInfo.InvariantCulture, out DateOnly parsedEndDate);
 		TimeOnly.TryParse(endTime, CultureInfo.InvariantCulture, out TimeOnly parsedEndTime);
 
-		// System.Console.WriteLine($"Parsed Start Date: {parsedStartDate}");
-		// System.Console.WriteLine($"Parsed Start Time: {parsedStartTime}");
-		// System.Console.WriteLine($"Parsed End Date: {parsedEndDate}");
-		// System.Console.WriteLine($"Parsed End Time: {parsedEndTime}");
+		System.Console.WriteLine($"Parsed Start Date: {parsedStartDate}");
+		System.Console.WriteLine($"Parsed Start Time: {parsedStartTime}");
+		System.Console.WriteLine($"Parsed End Date: {parsedEndDate}");
+		System.Console.WriteLine($"Parsed End Time: {parsedEndTime}");
+
+		// DateTime.TryParse($"{startDate} {startTime}", new CultureInfo("en-US"), out start);
+		// DateTime.TryParse($"{endDate} {endTime}", new CultureInfo("en-US"), out end);
+
+		// System.Console.WriteLine("Start DateTime: " + start);
+		// System.Console.WriteLine("End DateTime: " + end);
 
 		// defining start
 		if (startDate == null && startTime == null)
@@ -464,6 +470,11 @@ public class BookingController : Controller
 
 					DateOnly.TryParse(endDate, out var endDateOnly);
 					TimeOnly.TryParse(meetingEndTime, CultureInfo.InvariantCulture, out var endTimeOnly);
+					Console.WriteLine("endTimeOnly: " + endTimeOnly);
+					if (endTimeOnly != TimeOnly.MinValue)
+					{
+						endDateOnly = startDateOnly;
+					}
 					DateTime end = endDateOnly.ToDateTime(endTimeOnly);
 					Console.WriteLine("Start Date Time : " + start);
 					Console.WriteLine("End Date Time : " + end);

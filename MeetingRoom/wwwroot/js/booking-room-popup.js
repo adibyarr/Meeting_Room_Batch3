@@ -150,6 +150,9 @@ function popupChooseRoom(roomName, capacity, startDate, endDate, startTime, endT
         console.log("End Time Input: " + endTimeInput);
     });
 
+    // Date object of endDate
+    var dateOfEndDate = new Date(endDate);
+
     $('#submit-meeting').on('click', function (event) {
         console.log("Start Time: " + startTime);
         console.log("Start Time Input: " + startTimeInput);
