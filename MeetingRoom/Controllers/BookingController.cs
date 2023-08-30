@@ -204,6 +204,7 @@ public class BookingController : Controller
 			DateTime endInRoom;
 
 			Console.WriteLine($"totalDays : {totalDays}");
+			Console.WriteLine($"sameDaySpecifiedTime : {sameDaySpecifiedTime}");
 
 			DateTime lastDay;
 			for (int i = 0; i <= totalDays; i++)
@@ -220,6 +221,15 @@ public class BookingController : Controller
 						if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
 						{
 							endInRoom = end;
+							if (currentDay.Date != end.Date)
+							{
+								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+							}
+						}
+						
+						if (end.Date > start.Date)
+						{
+							endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
 						}
 					}
 					else
@@ -299,7 +309,10 @@ public class BookingController : Controller
 						if (startInRoom < singleEventStart)
 						{
 							optionEnd = singleEventStart;
-							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));
+							if (optionStart != optionEnd && optionStart < optionEnd)
+							{
+								optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));	
+							}
 							Console.WriteLine("------------- 4 -------------");
 							Console.WriteLine($"Added New Option : {room.RoomName}");
 							Console.WriteLine($"				 : {optionStart}");
@@ -312,7 +325,10 @@ public class BookingController : Controller
 						}
 						lastEvent = singleEvent;
 					}
-					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
+					if (lastEvent.End.DateTime != endInRoom && lastEvent.End.DateTime < endInRoom)
+					{
+						optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
+					}
 					Console.WriteLine("------------- 5 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
 					Console.WriteLine($"				 : {lastEvent.End.DateTime}");
@@ -321,7 +337,10 @@ public class BookingController : Controller
 
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));
+					if (startInRoom != endInRoom && startInRoom < endInRoom)
+					{
+						optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));	
+					}
 					Console.WriteLine("------------- 6 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
 					Console.WriteLine($"				 : {startInRoom}");
