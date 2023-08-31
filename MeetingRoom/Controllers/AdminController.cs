@@ -185,9 +185,9 @@ public class AdminController : Controller
 	public IActionResult EditRoom(long roomId, string roomName, long capacity, string description)
 	{
 		if (ModelState.IsValid)
-		{	
+		{
 			Room? room = _db.Rooms?.Find(roomId);
-			
+
 			var roomExisted = _db.Rooms.FirstOrDefault(room => room.RoomName == roomName);
 
 			if (roomExisted == null || roomExisted.RoomId == roomId)
@@ -207,7 +207,7 @@ public class AdminController : Controller
 
 		return RedirectToAction("RoomList");
 	}
-	
+
 	public IActionResult Account(long? userId)
 	{
 		userId = HttpContext.Session.GetInt32("UserID");

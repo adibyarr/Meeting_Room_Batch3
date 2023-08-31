@@ -15,6 +15,7 @@ public class UserControllerTests
     private UserController? _controller;
     private HttpContext _fakeHttpContext;
     private FakeHttpSession _fakeSession;
+    // private ISession _fakeSession;
 
     [SetUp]
     public void Setup()
@@ -24,6 +25,7 @@ public class UserControllerTests
         _controller = new UserController(_db);
         _fakeHttpContext = A.Fake<HttpContext>();
         _fakeSession = new FakeHttpSession();
+        // _fakeSession = A.Fake<ISession>();
     }
 
     [Test]
@@ -55,6 +57,10 @@ public class UserControllerTests
                 _fakeSession.SetInt32("UserID", (int)adib.UserId);
                 _fakeHttpContext.Session = _fakeSession;
                 _controller.ControllerContext.HttpContext = _fakeHttpContext;
+                // _controller.ControllerContext.HttpContext  = new DefaultHttpContext();
+                // _controller.ControllerContext.HttpContext.Session.SetInt32("UserID", (int)adib.UserId);
+                // _controller.ControllerContext.HttpContext.Request.Headers["UserID"] = adib.UserId.ToString();
+                // _controller.ControllerContext.HttpContext.Session = _fakeSession;
 
                 var result = _controller.Index((int?)adib.UserId);
 
