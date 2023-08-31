@@ -29,7 +29,7 @@ var dateNow = now.getDate();
 var monthNow = now.getMonth();
 var yearNow = now.getFullYear();
 if (now.getMinutes() > 30) {
-    now.setHours(availStart.getHours() + 1);
+    now.setHours(now.getHours() + 1);
     now.setMinutes(0);
 } else if (now.getMinutes() > 0) {
     now.setMinutes(30);

@@ -28,7 +28,7 @@
         <nav id="sidebar">
             <div class="sidebar-header">
                 <div class="row px-1">
-                    <img src="~/image/final-logo-formulatrix.png" class="logo" alt="Logo">
+                    <img src="~/image/logo.png" class="logo" alt="Logo">
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                 </li>
                 <li>
                     <a href="/Booking/Index" title="Booking"> @*to be added. action of booking*@
-                        <i class="fa-solid fa-calendar"></i><span class="menu-text">Booking</span>
+                        <i class="fa-solid fa-calendar"></i><span class="menu-text">Reservation</span>
                     </a>
                 </li>
                 <li>
@@ -70,7 +70,7 @@
                 <div class="container-fluid">
 
                     <button type="button" id="sidebarCollapse" class="btn btn-info"
-                        style="background-color: rgba(230, 230, 230, 0.659);">
+                        style="background-color: rgba(230, 230, 230, 0.659); border-color: rgba(145, 137, 137, 0.344)">
                         <i class="fas fa-align-left"></i>
                     </button>
                     <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
@@ -82,13 +82,13 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item user-profile">
+                                <div class="user-details">
+                                    <span class="username">Welcome, <strong>@Context.Session.GetString("UserName")</strong>!</span>
+                                    <span class="role">@Context.Session.GetString("Role")</span>
+                                </div>
                                 <div class="avatar">
                                     <img src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"
                                         class="rounded-circle" style="width: 40px;" alt="Avatar" />
-                                </div>
-                                <div class="user-details">
-                                    <span class="username"> @Context.Session.GetString("UserName")</span>
-                                    <span class="role">@Context.Session.GetString("Role")</span>
                                 </div>
                             </li>
                         </ul>
@@ -102,8 +102,16 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
+            var i = 0;
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
+                if (i == 0) {
+                    $('#content').css('margin-left', '0px');
+                    i = 1;
+                } else {
+                    $('#content').css('margin-left', '250px');
+                    i = 0;
+                }
             });
         });
     </script>

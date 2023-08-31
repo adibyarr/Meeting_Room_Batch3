@@ -56,6 +56,11 @@ public class BookingController : Controller
 			return RedirectToAction("Index", "Login");
 		}
 
+		Console.WriteLine($"startDate : {startDate}");
+		Console.WriteLine($"startTime : {startTime}");
+		Console.WriteLine($"endDate : {endDate}");
+		Console.WriteLine($"endTime : {endTime}");
+
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		List<OptionRoom> optionRoomList = new();
@@ -210,6 +215,7 @@ public class BookingController : Controller
 			DateTime endInRoom;
 
 			Console.WriteLine($"totalDays : {totalDays}");
+			Console.WriteLine($"sameDaySpecifiedTime : {sameDaySpecifiedTime}");
 
 			DateTime lastDay;
 			for (int i = 0; i <= totalDays; i++)
@@ -221,11 +227,42 @@ public class BookingController : Controller
 					startInRoom = start;
 					if (endTime != null)
 					{
+						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// // Check semua kondisi yang hasilnya empty pake ini :
+						// if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+						// {
+						// 	endInRoom = end;
+						// 	if (currentDay.Date != end.Date)
+						// 	{
+						// 		endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// 	}
+						// }
+						
+						// if (end.Date > start.Date)
+						// {
+						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+						// }
+						
+						// if (startDate != null && startTime != null && endDate != null && endTime != null)
+						// {
+						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
+						// }
+						
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// Check semua kondisi yang hasilnya empty pake ini :
-						if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+						if (start.Date == end.Date)
 						{
-							endInRoom = end;
+							if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
+							{
+								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
+							}
+							else if (parsedEndTime > TimeOnly.FromDateTime(DateTime.Now))
+							{
+								endInRoom = end;
+							}
+						} 
+						else
+						{
+							endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
 						}
 					}
 					else
@@ -305,7 +342,10 @@ public class BookingController : Controller
 						if (startInRoom < singleEventStart)
 						{
 							optionEnd = singleEventStart;
-							optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));
+							if (optionStart != optionEnd && optionStart < optionEnd)
+							{
+								optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));	
+							}
 							Console.WriteLine("------------- 4 -------------");
 							Console.WriteLine($"Added New Option : {room.RoomName}");
 							Console.WriteLine($"				 : {optionStart}");
@@ -318,7 +358,10 @@ public class BookingController : Controller
 						}
 						lastEvent = singleEvent;
 					}
-					optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
+					if (lastEvent.End.DateTime != endInRoom && lastEvent.End.DateTime < endInRoom)
+					{
+						optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
+					}
 					Console.WriteLine("------------- 5 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
 					Console.WriteLine($"				 : {lastEvent.End.DateTime}");
@@ -327,7 +370,10 @@ public class BookingController : Controller
 
 				if (events.Count == 0)
 				{
-					optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));
+					if (startInRoom != endInRoom && startInRoom < endInRoom)
+					{
+						optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));	
+					}
 					Console.WriteLine("------------- 6 -------------");
 					Console.WriteLine($"Added New Option : {room.RoomName}");
 					Console.WriteLine($"				 : {startInRoom}");
