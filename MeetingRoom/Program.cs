@@ -1,7 +1,7 @@
 using MeetingRoomWebApp.AutoGen;
 using Microsoft.EntityFrameworkCore;
 
-public static class Program
+public class Program
 {
     private static void Main(string[] args)
     {

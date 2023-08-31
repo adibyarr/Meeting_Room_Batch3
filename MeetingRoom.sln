@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetingRoom", "MeetingRoom\MeetingRoom.csproj", "{ECDAA7F8-F45F-407E-BE3E-D3D0EC79E374}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MeetingRoom.Tests", "MeetingRoom.Tests\MeetingRoom.Tests.csproj", "{37C7C17F-BA9B-4223-B6C0-68DC6CF676B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{ECDAA7F8-F45F-407E-BE3E-D3D0EC79E374}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECDAA7F8-F45F-407E-BE3E-D3D0EC79E374}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECDAA7F8-F45F-407E-BE3E-D3D0EC79E374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37C7C17F-BA9B-4223-B6C0-68DC6CF676B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C7C17F-BA9B-4223-B6C0-68DC6CF676B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C7C17F-BA9B-4223-B6C0-68DC6CF676B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C7C17F-BA9B-4223-B6C0-68DC6CF676B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
