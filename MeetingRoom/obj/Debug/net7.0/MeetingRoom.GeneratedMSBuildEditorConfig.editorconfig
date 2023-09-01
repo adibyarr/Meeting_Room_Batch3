@@ -9,37 +9,37 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = MeetingRoom
 build_property.RootNamespace = MeetingRoom
-build_property.ProjectDir = c:\Users\hp\BootcampBatch3\MeetingRoom\MeetingRoom\
+build_property.ProjectDir = d:\Learner\000 Work\230609 Formulatrix Bootcamp\Meeting Room\Meeting_Room_Batch3\MeetingRoom\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = c:\Users\hp\BootcampBatch3\MeetingRoom\MeetingRoom
+build_property.MSBuildProjectDirectory = d:\Learner\000 Work\230609 Formulatrix Bootcamp\Meeting Room\Meeting_Room_Batch3\MeetingRoom
 build_property._RazorSourceGeneratorDebug = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/Home/Index.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/Home/Privacy.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/Shared/Error.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/Shared/_ValidationScriptsPartial.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/_ViewImports.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/_ViewStart.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[c:/Users/hp/BootcampBatch3/MeetingRoom/MeetingRoom/Views/Shared/_Layout.cshtml]
+[d:/Learner/000 Work/230609 Formulatrix Bootcamp/Meeting Room/Meeting_Room_Batch3/MeetingRoom/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-v3butsosx9
