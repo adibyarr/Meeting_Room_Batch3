@@ -26,8 +26,8 @@ namespace MeetingRoom.Controllers
         {
             if (ModelState.IsValid)
             {
-                using (_db)
-                {
+                // using (_db)
+                // {
                     var user = _db.Users?.Where(u => !string.IsNullOrEmpty(u.Email) && u.Email.Equals(email)
                                                   && !string.IsNullOrEmpty(u.Password) && u.Password.Equals(password))
                                          .FirstOrDefault();
@@ -37,9 +37,9 @@ namespace MeetingRoom.Controllers
                         HttpContext.Session.SetInt32("UserID", Convert.ToInt32(user.UserId));
                         return RedirectToAction("SaveLoginData", user.UserId);
                     }
-                }
+                // }
             }
-            TempData["ErrorMessage"] = "Wrong Email or Password";
+            // TempData["ErrorMessage"] = "Wrong Email or Password";
             return RedirectToAction("Index");
         }
 
@@ -51,8 +51,8 @@ namespace MeetingRoom.Controllers
                 return RedirectToAction("Index", "Login");
             }
 
-            using (_db)
-            {
+            // using (_db)
+            // {
                 var user = _db.Users?.Include(u => u.Roles).Where(u => u.UserId == userId)
                                     .Select(u => new { u.Username, u.Email, u.Roles.RoleName, u.UserId })
                                     .FirstOrDefault();
@@ -76,7 +76,7 @@ namespace MeetingRoom.Controllers
                     }
                     return RedirectToAction("Index", "User", Convert.ToInt32(user.UserId));
                 }
-            }
+            // }
             return RedirectToAction("Index");
         }
     }

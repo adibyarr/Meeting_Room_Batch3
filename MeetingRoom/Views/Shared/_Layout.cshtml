@@ -102,8 +102,16 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
+            var i = 0;
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
+                if (i == 0) {
+                    $('#content').css('margin-left', '0px');
+                    i = 1;
+                } else {
+                    $('#content').css('margin-left', '250px');
+                    i = 0;
+                }
             });
         });
     </script>

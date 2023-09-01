@@ -32,7 +32,7 @@ public class UserController : Controller
 		{
 			return RedirectToAction("Index", "Login");
 		}
-		
+
 		return View();
 	}
 
@@ -48,7 +48,7 @@ public class UserController : Controller
 		{
 			return RedirectToAction("Index", "Login");
 		}
-		
+
 		List<Room> roomList = _db.Rooms.ToList();
 		return View("RoomList", roomList);
 	}
@@ -59,7 +59,7 @@ public class UserController : Controller
 		{
 			return RedirectToAction("Index", "Login");
 		}
-		
+
 		Console.WriteLine("--- INSIDE ACCOUNT ---");
 
 		var user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
