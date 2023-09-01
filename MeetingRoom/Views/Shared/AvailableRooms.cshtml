@@ -1,0 +1,57 @@
+@model MeetingRoomWebApp.AutoGen.User
+
+@{
+    ViewBag.Title = "Booking";
+    if (Model.Roles.RoleName == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4" style="margin-bottom: 40px;">Available Rooms</h1>
+
+    <div style="text-align: left; margin-bottom: 20px; margin-top: 10px;">
+        <button class="btn btn-primary" id="backButton">
+            <i class="fa-solid fa-arrow-left"></i>
+            <label>Back</label>
+        </button>
+    </div>
+
+    <div>
+        <table class="table table-hover">
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+                <col style="width: 20%;">
+            </colgroup>
+            <thead>
+                <tr style="background-color: rgba(230, 230, 230, 0.659);">
+                    <th scope="col">
+                        Room Name
+                    </th>
+                    <th scope="col">
+                        Capacity
+                    </th>
+                    <th scope="col">
+                        Date
+                    </th>
+                    <th scope="col">
+                        Time
+                    </th>
+                    <th scope="col">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+    </div>
+</div>
+
+<script>
+    document.getElementById("backButton").addEventListener("click", function() {
+        // Navigate back to the previous page
+        window.history.back();
+    });
+</script>

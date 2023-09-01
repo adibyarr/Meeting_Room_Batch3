@@ -1,0 +1,198 @@
+@model IEnumerable<MeetingRoomWebApp.AutoGen.Room>
+
+@{
+    ViewBag.Title = "Room List";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Room List</h1>
+
+    @* CREATE BUTTON *@
+    <div style="text-align: right; margin-bottom: 20px; margin-top: 10px;">
+        <button class="btn btn-primary" id="createButton"
+            onclick="popupCreateRoom()">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+    </div>
+
+    @* TABLE *@
+    <div>
+        <table class="table table-hover">
+            <colgroup>
+                <col style="width: 25%;">
+                <col style="width: 15%;">
+                <col style="width: 40%;">
+                <col style="width: 20%;">
+            </colgroup>
+            <thead>
+                <tr style="background-color: rgba(230, 230, 230, 0.659);">
+                    <th scope="col">
+                        Room Name
+                    </th>
+                    <th scope="col">
+                        Capacity
+                    </th>
+                    <th scope="col">
+                        Description
+                    </th>
+                    <th scope="col">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+
+            @* LOOPING FROM ROOMS TABLE *@
+            @foreach (var room in Model)
+            {
+                <tbody>
+                    <tr>
+                        <td scope="col">
+                            @room.RoomName
+                        </td>
+                        <td scope="col">
+                            @room.Capacity
+                        </td>
+                        <td scope="col" style="text-align: justify;">
+                            @room.Description
+                        </td>
+                        @* EDIT AND DELETE ACTION BUTTONS *@
+                        <td scope="col">
+                            <button class="btn btn-warning" id="editRoomButton"
+                                onclick="popupEditRoom('@room.RoomId', '@room.RoomName', '@room.Capacity', '@room.Description')">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="btn btn-danger" id="deleteRoomButton"
+                                onclick="popupDeleteRoom('@room.RoomName', '@room.RoomId')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            }
+        </table>
+    </div>
+</div>
+
+@* DELETE CONFIRMATION POP-UP *@
+<div class="modal" tabindex="-1" data-bs-backdrop='static' data-bs-keyboard=false>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"></h5>
+                @* <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> *@
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    @* CREATE ROOM POP-UP *@
+    function popupCreateRoom() {
+
+        $(".modal-title").html("Create Room");
+
+        $(".modal-body").html(
+            `
+            <form method="post" action="/Admin/CreateRoom">
+                <table class="table table-borderless">
+                <tr>
+                    <td><p>Room Name: </p></td>
+                    <td>
+                        <input type="text" class="form-control" name="roomName" required" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>Capacity: </p></td>
+                    <td>
+                        <input type="number" class="form-control" name="capacity" min="1" required" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>Description: </p></td>
+                    <td>
+                        <textarea type="text" class="form-control" name="description" id="description"
+                            rows="7" required></textarea>
+                    </td>
+                </tr>
+                </table>
+                <div style="text-align: right">
+                    <input type="submit" class="btn btn-success" value="Create"/>
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
+                </div>
+            <form>    
+            `
+        );
+
+        $(".modal").modal("show");
+    }
+
+    @* EDIT ROOM DETAILS POP-UP *@
+    function popupEditRoom(roomId, roomName, capacity, description) {
+
+        $(".modal-title").html("Edit Room");
+
+        $(".modal-body").html(
+            `
+            <form method="post" action="/Admin/EditRoom?roomId=${roomId}&roomName=${roomName}&capacity=${capacity}&description=${description}">
+                <table class="table table-borderless">
+                <tr>
+                    <td><p>Room Name: </p></td>
+                    <td>
+                        <input type="text" class="form-control" name="roomName" value="${roomName}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>Capacity: </p></td>
+                    <td>
+                        <input type="number" class="form-control" name="capacity" min="1" value="${capacity}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><p>Description: </p></td>
+                    <td>
+                        <textarea type="text" class="form-control" name="description" id="description"
+                            rows="7" required>${description}</textarea>
+                    </td>
+                </tr>
+                </table>
+                <div style="text-align: right">
+                    <input type="submit" class="btn btn-warning" value="Update"/>
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary">Cancel</button>
+                </div>
+            <form>    
+            `
+        );
+
+        $(".modal").modal("show");
+    }
+
+    @* DELETE CONFIRMATION POP-UP *@
+    function popupDeleteRoom(roomName, roomId) {
+
+        $(".modal-title").html("Delete Room");
+
+        $(".modal-body").html(
+            `
+            <form method="post" action="/Admin/DeleteRoom?roomId=${roomId}">
+            <div class="row p-2">
+                <p>Are you sure you want to delete Room <strong>${roomName}</strong>?</p>
+            </div>
+            <div style="text-align: right">
+            <input type="submit" class="btn btn-danger" value="Yes"/>
+                <button type="button" id="cancel-delete" class="btn btn-primary">No</button>
+                <form>
+                    </div>
+            `
+        );
+
+        $("#cancel-delete").click(function () {
+            $(".modal").modal("hide");
+        });
+
+        $(".modal").modal("show");
+    }
+</script>

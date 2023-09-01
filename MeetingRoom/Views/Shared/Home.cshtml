@@ -1,0 +1,131 @@
+@model MeetingRoomWebApp.AutoGen.User
+
+@{
+    ViewBag.Title = "Home";
+    if (Model.Roles.RoleName == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+}
+<head>
+    <title>Calendar Event</title>
+
+    <link href="/docs/dist/demo-to-codepen.css" rel="stylesheet">    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica , sans-serif;
+            font-size: 18%;
+        }
+        #calendar {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js"></script>
+    <script src="/docs/dist/demo-to-codepen.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Meeting Room Reservation</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="~/lib/fontawesome/dist/css/all.min.css" />
+    <link rel='stylesheet' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/ui-lightness/jquery-ui.css'>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MeetingRoom.styles.css" asp-append-version="true" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/fontawesome/dist/js/all.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <link rel="icon" href="/favicon-32x32.png?v=63734d4d33b09dc30c8e6c8f0ff38e19" type="image/png">
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-8LM1SN3K0E"></script>
+    <script>
+        
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-8LM1SN3K0E');
+    
+    </script>
+    <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="{&quot;token&quot;: &quot;dc4641f860664c6e824b093274f50291&quot;}"></script>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,listYear'
+      },
+
+      displayEventTime: false, // don't show the time column in list view
+
+      // THIS KEY WON'T WORK IN PRODUCTION!!!
+      // To make your own Google API key, follow the directions here:
+      // https://fullcalendar.io/docs/google-calendar
+      googleCalendarApiKey: 'AIzaSyAHMT2h8TKe20GPJj5dMMZmhMLXjBVQum8',
+
+      // US Holidays
+      eventSources: [
+      {
+        googleCalendarId: '244818f2ae9e65049c4ed3bd40744291d1aa439fa6377a0403b6f406831adc6d@group.calendar.google.com'
+      },
+      {
+        googleCalendarId: 'a5062b4a6b928018e6bce4529c0f4792952e5d385b32cf1ff429513052cb5bad@group.calendar.google.com'
+      }],
+
+      eventClick: function(arg) {
+
+        // opens events in a popup window
+        window.open(arg.eventSources.url, '_blank', 'width=700,height=600');
+
+        // prevents current tab from navigating
+        arg.jsEvent.preventDefault();
+      }
+
+    });
+
+    calendar.render();
+  });
+
+</script>
+</head>
+<body>
+<div class="demo-topbar">
+    @* Calendar Meeting *@
+    </div>
+    <div id="calendar" class="fc fc-media-screen fc-direction-ltr fc-theme-standard">
+        <div class="fc-toolbar-chunk">
+            <h2 class="fc-toolbar-title" id="fc-dom-1">
+                August 2023
+            </h2>
+            <div class="fc-toolbar-chunk">
+            <div class="fc-toolbar-chunk">
+                <button type="button" title="This Month" aria-pressed="false" class="fc-today-button fc-button fc-button-primary">today</button>
+                <div class="fc-button-group">
+                    <button type="button" title="Previous month" aria-pressed="false" class="fc-prev-button fc-button fc-button-primary">
+                        <span class="fc-icon fc-icon-chevron-left"></span>
+                        </button>
+                        <button type="button" title="Next month" aria-pressed="false" class="fc-next-button fc-button fc-button-primary"><span class="fc-icon fc-icon-chevron-right"></span>
+                        </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    $(document).ready(function(){
+        
+    })
+</script>
+</body>
