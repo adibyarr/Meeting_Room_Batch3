@@ -52,7 +52,6 @@ public static class CalendarManager
 		listRequest.TimeZone = "Asia/Jakarta";
 		listRequest.ShowDeleted = false;
 		listRequest.SingleEvents = true;
-		// listRequest.MaxResults = 10;
 		listRequest.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
 		Events events = listRequest.Execute();
@@ -130,14 +129,4 @@ public static class CalendarManager
 			}
 		}
 	}
-
-	// internal static Events MakeRequest(CalendarService service, Calendar calendar, DateTime start, DateTime end)
-	// {
-	//     throw new NotImplementedException();
-	// }
-
-	// internal static Event MakeRequest(CalendarService service, Calendar calendar, string startDate)
-	// {
-	//     throw new NotImplementedException();
-	// }
 }
