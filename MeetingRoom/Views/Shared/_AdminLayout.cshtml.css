@@ -58,14 +58,6 @@ a:focus {
   align-items: stretch;
 }
 
-/* #sidebar {
-  min-width: 250px;
-  max-width: 250px;
-  background: #19212F;
-  color: #fff;
-  transition: all 0.3s;
-} */
-
 #sidebar {
   height: 100%;
   min-width: 250px;
@@ -91,7 +83,6 @@ a:focus {
 
 #sidebar ul.components {
   padding: 20px 0;
-  /* border-bottom: 1px solid #47748b; */
 }
 
 #sidebar ul p {
@@ -169,10 +160,6 @@ a.article:hover {
   min-height: 100vh;
   transition: all 0.3s;
 }
-
-/* #content.active {
-  margin-left: -250px;
-} */
 
 /* ---------------------------------------------------
       MEDIAQUERIES
