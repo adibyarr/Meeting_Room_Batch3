@@ -56,11 +56,6 @@ public class BookingController : Controller
 			return RedirectToAction("Index", "Login");
 		}
 
-		Console.WriteLine($"startDate : {startDate}");
-		Console.WriteLine($"startTime : {startTime}");
-		Console.WriteLine($"endDate : {endDate}");
-		Console.WriteLine($"endTime : {endTime}");
-
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 		CalendarService service = CalendarManager.GenerateService(credential);
 		List<OptionRoom> optionRoomList = new();
@@ -95,17 +90,6 @@ public class BookingController : Controller
 		TimeOnly.TryParse(startTime, CultureInfo.InvariantCulture, out TimeOnly parsedStartTime);
 		DateOnly.TryParse(endDate, CultureInfo.InvariantCulture, out DateOnly parsedEndDate);
 		TimeOnly.TryParse(endTime, CultureInfo.InvariantCulture, out TimeOnly parsedEndTime);
-
-		System.Console.WriteLine($"Parsed Start Date: {parsedStartDate}");
-		System.Console.WriteLine($"Parsed Start Time: {parsedStartTime}");
-		System.Console.WriteLine($"Parsed End Date: {parsedEndDate}");
-		System.Console.WriteLine($"Parsed End Time: {parsedEndTime}");
-
-		// DateTime.TryParse($"{startDate} {startTime}", new CultureInfo("en-US"), out start);
-		// DateTime.TryParse($"{endDate} {endTime}", new CultureInfo("en-US"), out end);
-
-		// System.Console.WriteLine("Start DateTime: " + start);
-		// System.Console.WriteLine("End DateTime: " + end);
 
 		// defining start
 		if (startDate == null && startTime == null)
@@ -165,7 +149,7 @@ public class BookingController : Controller
 		if (end < DateTime.Now)
 		{
 			end = DateTime.Today.AddDays(1);
-		} // tambahi if end < start?
+		}
 
 		// defining capacity --> roomList
 		if (capacity == 0)
@@ -177,22 +161,14 @@ public class BookingController : Controller
 			roomList = FilterCapacity(capacity);
 		}
 
-		Console.WriteLine("------------- 1 -------------");
-		Console.WriteLine($"start: {start}");
-		Console.WriteLine($"end : {end}");
-		Console.WriteLine($"capacity : {capacity}");
-
 		Google.Apis.Calendar.v3.Data.Calendar calendar;
 		UserCredential credential = GoogleOAuth.GenerateCredential();
 
 		// main logic
 		foreach (var room in roomList)
 		{
-			Console.WriteLine("------------- 2 -------------");
-			Console.WriteLine("Entering foreach (var room in roomList)");
 			_service = CalendarManager.GenerateService(credential);
 			calendar = CalendarManager.GenerateCalendar(_service, room.Link);
-			Console.WriteLine("Passing through GenerateCAlendar");
 
 			int totalDays = (end.Day - start.Day);
 
@@ -214,9 +190,6 @@ public class BookingController : Controller
 			DateTime startInRoom;
 			DateTime endInRoom;
 
-			Console.WriteLine($"totalDays : {totalDays}");
-			Console.WriteLine($"sameDaySpecifiedTime : {sameDaySpecifiedTime}");
-
 			DateTime lastDay;
 			for (int i = 0; i <= totalDays; i++)
 			{
@@ -226,28 +199,7 @@ public class BookingController : Controller
 				{
 					startInRoom = start;
 					if (endTime != null)
-					{
-						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// // Check semua kondisi yang hasilnya empty pake ini :
-						// if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
-						// {
-						// 	endInRoom = end;
-						// 	if (currentDay.Date != end.Date)
-						// 	{
-						// 		endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
-						// 	}
-						// }
-						
-						// if (end.Date > start.Date)
-						// {
-						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
-						// }
-						
-						// if (startDate != null && startTime != null && endDate != null && endTime != null)
-						// {
-						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// }
-						
+					{						
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
 						if (start.Date == end.Date)
 						{
@@ -265,10 +217,6 @@ public class BookingController : Controller
 							if (parsedEndTime < TimeOnly.FromDateTime(DateTime.Now))
 							{
 								endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
-								// endInRoom = null;
-								// got the notion of equalizing endInRoom with startInRoom. effect: will not add current day. result: no.lol
-								// endInRoom = new DateTime(start.Year, start.Month, start.Day, start.Hour, start.Minute, start.Second+1);
-								// got another notion. purpose, excluding today. no, lol
 								if (startDate != null && endDate != null)
 								{
 									endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);		
@@ -312,22 +260,12 @@ public class BookingController : Controller
 					else if (startTime != null && endTime == null)
 					{
 						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
-						// startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
-						// if (startDate != null && endDate != null)
-						// {
-						// 	startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, start.Hour, start.Minute, start.Second);
-						// }
 					}
 					else if (startTime == null && endTime != null)
 					{
 						startInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0);
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
-						// if (startDate != null && endDate != null)
-						// {
-						// 	endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, end.Hour, end.Minute, end.Second);
-						// }
 					}
 					else
 					{
@@ -335,11 +273,6 @@ public class BookingController : Controller
 						endInRoom = new DateTime(currentDay.Year, currentDay.Month, currentDay.Day, 0, 0, 0).AddDays(1);
 					}
 				}
-
-				Console.WriteLine("------------- 3 -------------");
-				Console.WriteLine($"currentDat : {currentDay}");
-				Console.WriteLine($"startInRoom : {startInRoom}");
-				Console.WriteLine($"endInRoom : {endInRoom}");
 
 				if (startInRoom == endInRoom || startInRoom > endInRoom)
 				{
@@ -369,10 +302,6 @@ public class BookingController : Controller
 							{
 								optionRoomList.Add(new OptionRoom(room.RoomName, optionStart, optionEnd, room.Capacity));	
 							}
-							Console.WriteLine("------------- 4 -------------");
-							Console.WriteLine($"Added New Option : {room.RoomName}");
-							Console.WriteLine($"				 : {optionStart}");
-							Console.WriteLine($"				 : {optionEnd}");
 							optionStart = singleEventEnd;
 						}
 						else
@@ -385,10 +314,6 @@ public class BookingController : Controller
 					{
 						optionRoomList.Add(new OptionRoom(room.RoomName, lastEvent.End.DateTime, endInRoom, room.Capacity));
 					}
-					Console.WriteLine("------------- 5 -------------");
-					Console.WriteLine($"Added New Option : {room.RoomName}");
-					Console.WriteLine($"				 : {lastEvent.End.DateTime}");
-					Console.WriteLine($"				 : {endInRoom}");
 				}
 
 				if (events.Count == 0)
@@ -397,28 +322,10 @@ public class BookingController : Controller
 					{
 						optionRoomList.Add(new OptionRoom(room.RoomName, startInRoom, endInRoom, room.Capacity));	
 					}
-					Console.WriteLine("------------- 6 -------------");
-					Console.WriteLine($"Added New Option : {room.RoomName}");
-					Console.WriteLine($"				 : {startInRoom}");
-					Console.WriteLine($"				 : {endInRoom}");
 				}
 				lastDay = currentDay;
 			}
-			Console.WriteLine(" ");
-			Console.WriteLine("######################");
-			Console.WriteLine(" ");
 		}
-
-		foreach (var room in optionRoomList)
-		{
-			Console.WriteLine("-----");
-			Console.WriteLine($"RoomName : {room.RoomName}");
-			Console.WriteLine($"RoomCapacity : {room.Capacity}");
-			Console.WriteLine($"Start : {room.StartDate}");
-			Console.WriteLine($"End : {room.EndDate}");
-		}
-
-		Console.WriteLine("");
 
 		return optionRoomList;
 	}
@@ -430,26 +337,6 @@ public class BookingController : Controller
 									   string meetingStartTime, string meetingEndTime,
 									   string roomName, long? roomCap)
 	{
-		// summary = "Final Project Discussion";
-		// description = "Group Discuss";
-		// startDate = "31/08/2023";
-		// endDate = "31/08/2023";
-		// meetingStartTime = "09:00";
-		// meetingEndTime = "12:00";
-		// roomName = "Merapi";
-		// roomCap = 5;
-
-		Console.WriteLine("Meeting summary: " + summary);
-		Console.WriteLine("Meeting desc: " + description);
-		Console.WriteLine("Attendees: " + attendee);
-
-		Console.WriteLine("Start Date: " + startDate);
-		Console.WriteLine("End Date: " + endDate);
-		Console.WriteLine("Start Time: " + meetingStartTime);
-		Console.WriteLine("End Time: " + meetingEndTime);
-
-		Console.WriteLine("Room Name: " + roomName);
-		Console.WriteLine("Room Capacity: " + roomCap);
 		int? userId = HttpContext.Session.GetInt32("UserID");
 		if (userId == null)
 		{
@@ -481,7 +368,6 @@ public class BookingController : Controller
 
 				// Create meeting prompt
 				var room = _db.Rooms?.FirstOrDefault(r => r.RoomName.Equals(roomName));
-				Console.WriteLine("Room Calendar Link: " + room.Link);
 				if (_service != null && room != null)
 				{
 					Google.Apis.Calendar.v3.Data.Calendar calendar = CalendarManager.GenerateCalendar(_service, room.Link);
@@ -493,14 +379,12 @@ public class BookingController : Controller
 
 					DateOnly.TryParse(endDate, out var endDateOnly);
 					TimeOnly.TryParse(meetingEndTime, CultureInfo.InvariantCulture, out var endTimeOnly);
-					Console.WriteLine("endTimeOnly: " + endTimeOnly);
+
 					if (endTimeOnly != TimeOnly.MinValue)
 					{
 						endDateOnly = startDateOnly;
 					}
 					DateTime end = endDateOnly.ToDateTime(endTimeOnly);
-					Console.WriteLine("Start Date Time : " + start);
-					Console.WriteLine("End Date Time : " + end);
 
 					EventDateTime meetingStart = new EventDateTime() { DateTimeDateTimeOffset = start, TimeZone = "Asia/Jakarta" };
 					EventDateTime meetingEnd = new EventDateTime() { DateTimeDateTimeOffset = end, TimeZone = "Asia/Jakarta" };
@@ -512,16 +396,9 @@ public class BookingController : Controller
 												meetingStart,
 												meetingEnd,
 												attenders);
-
-					Console.WriteLine("Creating Meeting : " + isMeetingCreated);
-				}
-				foreach (var attender in attenders)
-				{
-					Console.WriteLine(attender.Email);
 				}
 			}
 		}
-
 		return View("Booking");
 	}
 }

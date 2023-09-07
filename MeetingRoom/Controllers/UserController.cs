@@ -60,13 +60,7 @@ public class UserController : Controller
 			return RedirectToAction("Index", "Login");
 		}
 
-		Console.WriteLine("--- INSIDE ACCOUNT ---");
-
 		var user = _db.Users.Include(u => u.Roles).FirstOrDefault(u => u.UserId == userId);
-
-		// Console.WriteLine($"from _db UserName : {user.Username}");
-		// Console.WriteLine($"from _db Email : {user.Email}");
-		// Console.WriteLine($"from _db Role : {user.Roles}");
 
 		if (user != null)
 		{
@@ -81,19 +75,7 @@ public class UserController : Controller
 	{
 		if (ModelState.IsValid)
 		{
-			Console.WriteLine("--- INSIDE EDIT PROFILE ---");
-
-			Console.WriteLine($"passed UserId : {userId}");
-			Console.WriteLine($"passed UserName : {userName}");
-			// Console.WriteLine($"passed Email : {email}");
-			// Console.WriteLine($"passed role : {role}");
-
 			User userProfile = _db.Users.Find(userId);
-
-			Console.WriteLine($"from _db UserId : {userProfile.UserId}");
-			Console.WriteLine($"from _db UserName : {userProfile.Username}");
-			Console.WriteLine($"from _db Email : {userProfile.Email}");
-			Console.WriteLine($"from _db role : {userProfile.Roles}");
 
 			userProfile.Username = userName;
 			userProfile.FirstName = firstName;
